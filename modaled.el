@@ -29,6 +29,14 @@
 
 ;;; Code:
 
+(defgroup modaled nil
+	"Fully customizable modal editing for Emacs"
+	:group 'editing
+	:tag "Modaled"
+	:prefix "modaled-"
+	:link '(url-link :tag "GitHub" "https://github.com/DCsunset/modaled")
+)
+
 (defvar modaled-default-state
   nil
   "Default modaled state"
@@ -44,6 +52,7 @@
   "Alist of all defined states"
 )
 
+;;;###autoload
 (defun modaled-get-state-mode (state)
   "Get state minor mode"
   ; do not use alist-get as it uses eq instead of equal
@@ -63,6 +72,40 @@
   (setq modaled--state state)
 )
 
+(defun modaled-define-keys (keymap keybindings)
+  "Define keybindings in the keymap"
+  (pcase-dolist (`(,key . ,def) keybindings)
+    ; TODO: support key translation
+    (define-key keymap (kbd key) def)
+  )
+)
+
+;;;###autoload
+(defmacro modaled-define-state (state keybindings)
+  "Define a new state mode and its keybindings.
+  Generated minor mode: modaled-{state}-mode.
+  Generated keymap: modaled-{state}-keymap."
+  (let ((mode (intern (format "modaled-%s-mode" state)))
+        (keymap (intern (format "modaled-%s-keymap" state)))
+        (lighter (format "[%s]" state))
+        (doc (format "Modaled state minor mode %s" state)))
+    `(progn
+      (defvar ,keymap (make-sparse-keymap) "")
+      (modaled-define-keys ,keymap ,keybindings)
+			; TODO: disable existing keymaps
+      (define-minor-mode ,mode
+        ,doc
+        :init-value nil
+        :lighter ,lighter
+        :keymap ,keymap
+        (setq-local cursor-type 'box)
+      )
+      (setq modaled--state-alist (push (cons ,state ',mode) modaled--state-alist))
+    )
+  )
+)
+
+;;;###autoload
 (defmacro modaled-define-default-state (state)
   "Define default state used in global minor mode"
   (let ((mode (intern-soft (format "modaled-%s-mode" state))))
@@ -75,41 +118,13 @@
             (modaled-set-state ,state)
           )
         )
+				:group 'modaled
       )
       (setq modaled-default-state ,state)
     )
   )
 )
 
-(defun modaled-define-keys (keymap keybindings)
-  "Define keybindings in the keymap"
-  (pcase-dolist (`(,key . ,def) keybindings)
-    ; TODO: support key translation
-    (define-key keymap (kbd key) def)
-  )
-)
-
-(defmacro modaled-define-state (state keybindings)
-  "Define a new state mode and its keybindings.
-  Generated minor mode: modaled-{state}-mode.
-  Generated keymap: modaled-{state}-keymap."
-  (let ((mode (intern (format "modaled-%s-mode" state)))
-        (keymap (intern (format "modaled-%s-keymap" state)))
-        (lighter (format "[%s]" state))
-        (doc (format "Modaled state minor mode %s" state)))
-    `(progn
-      (defvar ,keymap (make-sparse-keymap) "")
-      (modaled-define-keys ,keymap ,keybindings)
-      (define-minor-mode ,mode
-        ,doc
-        :init-value nil
-        :lighter ,lighter
-        :keymap ,keymap
-        (setq-local cursor-type 'box)
-      )
-      (setq modaled--state-alist (push (cons ,state ',mode) modaled--state-alist))
-    )
-  )
-)
+(provide 'modaled)
 
 ;;; modaled.el ends here
