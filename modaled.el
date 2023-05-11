@@ -42,7 +42,7 @@
   "Default modaled state"
 )
 
-(defvar modaled--state
+(defvar modaled-state
   nil
   "Current modaled state"
 )
@@ -59,23 +59,24 @@
   (cdr (assoc state modaled--state-alist))
 )
 
+;;;###autoload
 (defun modaled-set-state (state)
   "Set current modaled state"
   ; Do not use let as it only establishes bindings for values
   ; disable current mode
-  (when modaled--state
-    (funcall (modaled-get-state-mode modaled--state) 0)
+  (when modaled-state
+    (funcall (modaled-get-state-mode modaled-state) 0)
   )
   (when state
     (funcall (modaled-get-state-mode state) 1)
   )
-  (setq modaled--state state)
+  (setq modaled-state state)
 )
 
+;;;###autoload
 (defun modaled-define-keys (keymap keybindings)
   "Define keybindings in the keymap"
   (pcase-dolist (`(,key . ,def) keybindings)
-    ; TODO: support key translation
     (define-key keymap (kbd key) def)
   )
 )
@@ -92,7 +93,6 @@
     `(progn
       (defvar ,keymap (make-sparse-keymap) "")
       (modaled-define-keys ,keymap ,keybindings)
-			; TODO: disable existing keymaps
       (define-minor-mode ,mode
         ,doc
         :init-value nil
