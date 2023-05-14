@@ -6,7 +6,7 @@
 ;; URL: https://github.com/DCsunset/modaled
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "25.1"))
-;; Keywords: modal editing
+;; Keywords: convenience, modal-editing
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
@@ -30,62 +30,53 @@
 ;;; Code:
 
 (defgroup modaled nil
-	"Fully customizable modal editing for Emacs"
+	"Fully customizable modal editing for Emacs."
 	:group 'editing
 	:tag "Modaled"
 	:prefix "modaled-"
-	:link '(url-link :tag "GitHub" "https://github.com/DCsunset/modaled")
-)
+	:link '(url-link :tag "GitHub" "https://github.com/DCsunset/modaled"))
 
 (defvar modaled-default-state
   nil
-  "Default modaled state"
-)
+  "Default modaled state.")
 
 (defvar modaled-state
   nil
-  "Current modaled state"
-)
+  "Current modaled state.")
 
 (defvar modaled--state-alist
   '()
-  "Alist of all defined states"
-)
+  "Alist of all defined states.")
 
 ;;;###autoload
 (defun modaled-get-state-mode (state)
-  "Get state minor mode"
+  "Get minor mode of STATE."
   ; do not use alist-get as it uses eq instead of equal
-  (cdr (assoc state modaled--state-alist))
-)
+  (cdr (assoc state modaled--state-alist)))
 
 ;;;###autoload
 (defun modaled-set-state (state)
-  "Set current modaled state"
+  "Set current modaled STATE."
   ; Do not use let as it only establishes bindings for values
   ; disable current mode
   (when modaled-state
-    (funcall (modaled-get-state-mode modaled-state) 0)
-  )
+    (funcall (modaled-get-state-mode modaled-state) 0))
   (when state
-    (funcall (modaled-get-state-mode state) 1)
-  )
-  (setq modaled-state state)
-)
+    (funcall (modaled-get-state-mode state) 1))
+  (setq modaled-state state))
 
 ;;;###autoload
 (defun modaled-define-keys (keymap keybindings)
-  "Define keybindings in the keymap"
+  "Define KEYBINDINGS in the KEYMAP."
   (pcase-dolist (`(,key . ,def) keybindings)
-    (define-key keymap (kbd key) def)
-  )
-)
+    (define-key keymap (kbd key) def)))
 
 ;;;###autoload
 (defmacro modaled-define-state (state keybindings)
-  "Define a new state mode and its keybindings.
-  Generated minor mode: modaled-{state}-mode.
-  Generated keymap: modaled-{state}-keymap."
+  "Define a new STATE mode and its KEYBINDINGS.
+
+Generated minor mode: modaled-STATE-mode.
+Generated keymap: modaled-STATE-keymap."
   (let ((mode (intern (format "modaled-%s-mode" state)))
         (keymap (intern (format "modaled-%s-keymap" state)))
         (lighter (format "[%s]" state))
@@ -98,16 +89,12 @@
         :init-value nil
         :lighter ,lighter
         :keymap ,keymap
-        (setq-local cursor-type 'box)
-      )
-      (setq modaled--state-alist (push (cons ,state ',mode) modaled--state-alist))
-    )
-  )
-)
+        (setq-local cursor-type 'box))
+      (setq modaled--state-alist (push (cons ,state ',mode) modaled--state-alist)))))
 
 ;;;###autoload
 (defmacro modaled-define-default-state (state)
-  "Define default state used in global minor mode"
+  "Define default STATE used in global minor mode."
   (let ((mode (intern-soft (format "modaled-%s-mode" state))))
     `(progn
       (define-globalized-minor-mode modaled-global-mode
@@ -115,15 +102,9 @@
         (lambda ()
           (unless (minibufferp)
             ; enable default modaled minor modes
-            (modaled-set-state ,state)
-          )
-        )
-				:group 'modaled
-      )
-      (setq modaled-default-state ,state)
-    )
-  )
-)
+            (modaled-set-state ,state)))
+	:group 'modaled)
+      (setq modaled-default-state ,state))))
 
 (provide 'modaled)
 
