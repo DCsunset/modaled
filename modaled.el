@@ -44,15 +44,13 @@
   nil
   "Current modaled state.")
 
-(defvar modaled--state-alist
-  '()
-  "Alist of all defined states.")
+(defun modaled--get-state-mode (state)
+  "Get the symbol of STATE minor mode."
+	(intern (format "modaled-%s-mode" state)))
 
-;;;###autoload
-(defun modaled-get-state-mode (state)
-  "Get minor mode of STATE."
-  ; do not use alist-get as it uses eq instead of equal
-  (cdr (assoc state modaled--state-alist)))
+(defun modaled--get-state-keymap (state)
+  "Get the symbol of STATE keymap."
+	(intern (format "modaled-%s-keymap" state)))
 
 ;;;###autoload
 (defun modaled-set-state (state)
@@ -60,42 +58,48 @@
   ; Do not use let as it only establishes bindings for values
   ; disable current mode
   (when modaled-state
-    (funcall (modaled-get-state-mode modaled-state) 0))
+    (funcall (modaled--get-state-mode modaled-state) 0))
   (when state
-    (funcall (modaled-get-state-mode state) 1))
+    (funcall (modaled--get-state-mode state) 1))
   (setq modaled-state state))
 
 ;;;###autoload
-(defun modaled-define-keys (keymap keybindings)
-  "Define KEYBINDINGS in the KEYMAP."
-  (pcase-dolist (`(,key . ,def) keybindings)
-    (define-key keymap (kbd key) def)))
+(defun modaled-define-state-keys (state &rest keybindings)
+  "Define KEYBINDINGS for the STATE."
+	(let ((keymap (modaled--get-state-keymap state)))
+		(pcase-dolist (`(,key . ,def) keybindings)
+			(eval `(define-key ,keymap (kbd ,key) #',def)))))
 
 ;;;###autoload
-(defmacro modaled-define-state (state keybindings)
-  "Define a new STATE mode and its KEYBINDINGS.
+(defun modaled-define-global-keys (&rest keybindings)
+  "Define KEYBINDINGS globally."
+  (pcase-dolist (`(,key . ,def) keybindings)
+    (global-set-key (kbd key) def)))
+
+;;;###autoload
+(defmacro modaled-define-state (state)
+  "Define a new STATE minor mode.
 
 Generated minor mode: modaled-STATE-mode.
 Generated keymap: modaled-STATE-keymap."
-  (let ((mode (intern (format "modaled-%s-mode" state)))
-        (keymap (intern (format "modaled-%s-keymap" state)))
+  (let ((mode (modaled--get-state-mode state))
+        (keymap (modaled--get-state-keymap state))
         (lighter (format "[%s]" state))
         (doc (format "Modaled state minor mode %s" state)))
     `(progn
       (defvar ,keymap (make-sparse-keymap) "")
-      (modaled-define-keys ,keymap ,keybindings)
       (define-minor-mode ,mode
         ,doc
         :init-value nil
         :lighter ,lighter
         :keymap ,keymap
         (setq-local cursor-type 'box))
-      (setq modaled--state-alist (push (cons ,state ',mode) modaled--state-alist)))))
+      )))
 
 ;;;###autoload
 (defmacro modaled-define-default-state (state)
   "Define default STATE used in global minor mode."
-  (let ((mode (intern-soft (format "modaled-%s-mode" state))))
+  (let ((mode (modaled--get-state-mode state)))
     `(progn
       (define-globalized-minor-mode modaled-global-mode
         ,mode
