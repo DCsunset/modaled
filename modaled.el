@@ -77,15 +77,21 @@
     (global-set-key (kbd key) def)))
 
 ;;;###autoload
-(defmacro modaled-define-state (state)
+(defmacro modaled-define-state (state &rest body)
   "Define a new STATE minor mode.
 
-Generated minor mode: modaled-STATE-mode.
-Generated keymap: modaled-STATE-keymap."
+This function will generate the definiations for the following items:
+1. modaled-STATE-mode: Minor mode for the state.
+2. modaled-STATE-keymap: Keymap for the state.
+
+The following optional keywords are supported:
+:lighter	Text displayed in the mode line when the state is active.
+:cursor-type	Cursor type for the state."
   (let ((mode (modaled--get-state-mode state))
         (keymap (modaled--get-state-keymap state))
-        (lighter (format "[%s]" state))
-        (doc (format "Modaled state minor mode %s" state)))
+        (lighter (plist-get body :lighter))
+        (cursor-type (plist-get body :cursor-type))
+        (doc (format "Modaled minor mode for state %s" state)))
     `(progn
       (defvar ,keymap (make-sparse-keymap) "")
       (define-minor-mode ,mode
@@ -93,8 +99,8 @@ Generated keymap: modaled-STATE-keymap."
         :init-value nil
         :lighter ,lighter
         :keymap ,keymap
-        (setq-local cursor-type 'box))
-      )))
+        (when ,cursor-type
+					(setq-local cursor-type ,cursor-type))))))
 
 ;;;###autoload
 (defmacro modaled-define-default-state (state)
