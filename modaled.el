@@ -80,20 +80,29 @@
 (defmacro modaled-define-state (state &rest body)
   "Define a new STATE minor mode.
 
-This function will generate the definiations for the following items:
+This function will generate the definitions for the following items:
 1. modaled-STATE-mode: Minor mode for the state.
 2. modaled-STATE-keymap: Keymap for the state.
 
 The following optional keywords are supported:
+:sparse		Use a sparse keymap instead of a full keymap
+:suppress	Remapping self-insert-command to undefined in the keymap
 :lighter	Text displayed in the mode line when the state is active.
 :cursor-type	Cursor type for the state."
   (let ((mode (modaled--get-state-mode state))
         (keymap (modaled--get-state-keymap state))
+				(keymap-doc (format "Keymap for state %s." state))
+				(sparse (plist-get body :sparse))
+				(suppress (plist-get body :suppress))
         (lighter (plist-get body :lighter))
         (cursor-type (plist-get body :cursor-type))
         (doc (format "Modaled minor mode for state %s" state)))
     `(progn
-      (defvar ,keymap (make-sparse-keymap) "")
+			(defvar ,keymap
+				(if ,sparse (make-sparse-keymap) (make-keymap))
+				,keymap-doc)
+			(when ,suppress
+				(suppress-keymap ,keymap))
       (define-minor-mode ,mode
         ,doc
         :init-value nil
