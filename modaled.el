@@ -64,6 +64,12 @@
   (setq modaled-state state))
 
 ;;;###autoload
+(defun modaled-set-default-state ()
+  "Set current state to default state."
+	(interactive)
+	(modaled-set-state modaled-default-state))
+
+;;;###autoload
 (defun modaled-define-state-keys (state &rest keybindings)
   "Define KEYBINDINGS for the STATE."
 	(let ((keymap (modaled--get-state-keymap state)))
