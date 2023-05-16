@@ -84,15 +84,15 @@
 
 ;;;###autoload
 (defmacro modaled-define-state (state &rest body)
-  "Define a new STATE minor mode.
+  "Define a new STATE minor mode with options in BODY.
 
 This function will generate the definitions for the following items:
 1. modaled-STATE-mode: Minor mode for the state.
 2. modaled-STATE-keymap: Keymap for the state.
 
-The following optional keywords are supported:
+The following options are supported:
 :sparse		Use a sparse keymap instead of a full keymap
-:suppress	Remapping self-insert-command to undefined in the keymap
+:suppress	Remapping `self-insert-command' to `undefined' in the keymap
 :lighter	Text displayed in the mode line when the state is active.
 :cursor-type	Cursor type for the state."
   (let ((mode (modaled--get-state-mode state))
