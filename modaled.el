@@ -55,8 +55,8 @@
 ;;;###autoload
 (defun modaled-set-state (state)
   "Set current modaled STATE."
-  ; Do not use let as it only establishes bindings for values
   ; disable current mode
+	(message "set state to %s" state)
   (when modaled-state
     (funcall (modaled--get-state-mode modaled-state) 0))
   (when state
@@ -111,7 +111,6 @@ The following options are supported:
 				(suppress-keymap ,keymap))
       (define-minor-mode ,mode
         ,doc
-        :init-value nil
         :lighter ,lighter
         :keymap ,keymap
         (when ,cursor-type
@@ -122,14 +121,14 @@ The following options are supported:
   "Define default STATE used in global minor mode."
   (let ((mode (modaled--get-state-mode state)))
     `(progn
+			(setq modaled-default-state ,state)
       (define-globalized-minor-mode modaled-global-mode
         ,mode
         (lambda ()
           (unless (minibufferp)
             ; enable default modaled minor modes
-            (modaled-set-state ,state)))
-	:group 'modaled)
-      (setq modaled-default-state ,state))))
+            (modaled-set-default-state)))
+				:group 'modaled))))
 
 (provide 'modaled)
 
