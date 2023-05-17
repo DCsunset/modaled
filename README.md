@@ -49,9 +49,6 @@ You can later enable the global mode directly using it.
 Note that the default state must be defined by `modaled-define-state` before you call `modaled-define-default-state`.
 
 ```emacs-lisp
-(modaled-define-default-state "normal")
-(modaled-global-mode 1)
-
 (modaled-define-state "insert"
   :sparse t
   :cursor-type 'bar
@@ -59,6 +56,9 @@ Note that the default state must be defined by `modaled-define-state` before you
 (modaled-define-state-keys "insert"
   ; bind a key to change back to default state from other states
   '("<escape>" . modaled-set-default-state))
+
+(modaled-define-default-state "normal")
+(modaled-global-mode 1)
 ```
 
 To see supported arguments for each function, use `describe-function` (usually bound to `C-h f`) to see the docs.
