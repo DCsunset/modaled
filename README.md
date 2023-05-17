@@ -1,6 +1,6 @@
 # Modaled
 
-Modaled is a fully customizable modal editing for Emacs.
+Modaled is a fully customizable modal editing package for Emacs.
 
 Unlike many popular modal editing modes,
 Modaled doesn't provide any keybindings
