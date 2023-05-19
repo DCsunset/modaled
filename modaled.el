@@ -56,7 +56,6 @@
 (defun modaled-set-state (state)
   "Set current modaled STATE."
   ; disable current mode
-	(message "set state to %s" state)
   (when modaled-state
     (funcall (modaled--get-state-mode modaled-state) 0))
   (when state
