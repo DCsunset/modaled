@@ -13,6 +13,30 @@ Compared to modalka, Modaled supports multiple minor modes and comes with no def
 Compared to meow, Modaled has no default config and greatly simplifies the design for customization from scratch.
 You can freely define many different states and their corresponding minor modes in Modaled.
 
+## Installation
+
+To install the package manually, download this repo to Emacs' `load-path`.
+Then add the following to the config file:
+
+```emacs-lisp
+(require 'modaled)
+```
+
+If you are using Nix home-manager,
+you can import the `default.nix` in this repo,
+and then add it to the emacs package:
+
+```nix
+programs.emacs = let
+  modaled = import /path/to/modaled { inherit pkgs; };
+in {
+  enable = true;
+  extraPackages = epkgs: [
+    modaled
+  ];
+};
+```
+
 ## Usage
 
 You can define your own state and keybindings by `modaled-define-state STATE &rest BODY`.
