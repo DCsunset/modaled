@@ -1,4 +1,4 @@
-;;; modaled.el --- Fully customizable modal editing for Emacs  -*- lexical-binding: t; -*-
+;;; modaled.el --- Fully customizable modal editing  -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2023  DCsunset
 ;;
