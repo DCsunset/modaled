@@ -9,7 +9,8 @@ and nor does it come with any minor modes by default.
 This package provides util functions to help you build your own keybindings and minor modes.
 It is inspired by [modalka](https://github.com/mrkkrp/modalka) and [meow](https://github.com/meow-edit/meow),
 but it supports building your own minor modes without any predefined states.
-Compared to modalka, Modaled supports multiple minor modes and comes with no default mode.
+Compared to modalka, Modaled supports creating multiple minor modes and comes with no default mode,
+which makes it possible to implement different states in modal editing and different keybindings for different situations.
 Compared to meow, Modaled has no default config and greatly simplifies the design for customization from scratch.
 You can freely define many different states and their corresponding minor modes in Modaled.
 
