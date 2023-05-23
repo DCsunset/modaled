@@ -127,6 +127,7 @@ The following options are supported:
 					(unless (minibufferp)
 						; enable default modaled minor modes
 						(modaled-set-default-state)))
+				:require 'modaled
 				:group 'modaled))))
 
 (provide 'modaled)
