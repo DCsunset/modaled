@@ -70,10 +70,15 @@
 
 ;;;###autoload
 (defun modaled-define-state-keys (state &rest keybindings)
-	"Define KEYBINDINGS for the STATE."
-	(let ((keymap (modaled--get-state-keymap state)))
-		(pcase-dolist (`(,key . ,def) keybindings)
-			(eval `(define-key ,keymap (kbd ,key) #',def)))))
+	"Define KEYBINDINGS for the STATE.
+
+STATE can be a single state or a list of states.
+If it's a list, KEYBINDINGS will be applied to all states in list."
+	(let ((states (if (listp state) state `(,state))))
+		(dolist (st states)
+			(let ((keymap (modaled--get-state-keymap st)))
+				(pcase-dolist (`(,key . ,def) keybindings)
+					(eval `(define-key ,keymap (kbd ,key) #',def)))))))
 
 ;;;###autoload
 (defun modaled-define-global-keys (&rest keybindings)

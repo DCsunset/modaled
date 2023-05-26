@@ -78,9 +78,11 @@ Note that the default state must be defined by `modaled-define-state` before you
   :sparse t
   :cursor-type 'bar
   :lighter "[INS]")
-(modaled-define-state-keys "insert"
+
+; modaled-define-keys also supports defining keys for multiple states (suppose select state is already defined)
+(modaled-define-keys '("insert" "select")
   ; bind a key to change back to default state from other states
-  '("<escape>" . modaled-set-default-state))
+  '("ESC" . modaled-set-default-state))
 
 (modaled-define-default-state "normal")
 (modaled-global-mode 1)
