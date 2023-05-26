@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.2.0](https://github.com/DCsunset/modaled/compare/v0.1.0...v0.2.0) (2023-05-26)
+
+
+### Features
+
+* support defining keys for multiple states ([45bb7ca](https://github.com/DCsunset/modaled/commit/45bb7cac0ffa06844ef9af5b6086d73ddd59b6b1))
+
+
+### Bug Fixes
+
+* add require for global minor mode ([d4ca18c](https://github.com/DCsunset/modaled/commit/d4ca18c4c0e5b01e35548667e88cfb5e4b93e3b1))
+* fix lint warning ([1100e2d](https://github.com/DCsunset/modaled/commit/1100e2d2d9ca1c9e4a8f9b4e90d9213b8cd9d9dd))
+* remove unnecessary logging ([9c5ebc3](https://github.com/DCsunset/modaled/commit/9c5ebc3944b749889897182e740ef7af1f4e5301))
+
 ## 0.1.0 (2023-05-17)
 
 
