@@ -78,13 +78,13 @@ If it's a list, KEYBINDINGS will be applied to all states in list."
 		(dolist (st states)
 			(let ((keymap (modaled--get-state-keymap st)))
 				(pcase-dolist (`(,key . ,def) keybindings)
-					(eval `(define-key ,keymap (kbd ,key) #',def)))))))
+					(eval `(define-key ,keymap ,key #',def)))))))
 
 ;;;###autoload
 (defun modaled-define-global-keys (&rest keybindings)
 	"Define KEYBINDINGS globally."
 	(pcase-dolist (`(,key . ,def) keybindings)
-		(global-set-key (kbd key) def)))
+		(global-set-key key def)))
 
 ;;;###autoload
 (defmacro modaled-define-state (state &rest body)
