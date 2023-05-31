@@ -88,6 +88,17 @@ Note that the default state must be defined by `modaled-define-state` before you
 (modaled-global-mode 1)
 ```
 
+To enable the default state only in specific modes, use `:predicate` option in `modaled-defined-default-state`
+(see more [:predicate usage](https://www.gnu.org/software/emacs/manual/html_node/elisp/Defining-Minor-Modes.html#index-define_002dglobalized_002dminor_002dmode)):
+
+```emacs-lisp
+; only in c++-mode
+(modaled-define-default-state "normal" :predicate '(c++-mode))
+; set default state except c++-mode
+(modaled-define-default-state "normal" :predicate '((not c++-mode) t))
+(modaled-global-mode 1)
+```
+
 To see supported arguments for each function, use `describe-function` (usually bound to `C-h f`) to see the docs.
 
 ## License
