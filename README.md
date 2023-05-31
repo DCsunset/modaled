@@ -1,5 +1,8 @@
 # Modaled
 
+[![MELPA](https://badgen.net//melpa/v/modaled)](https://hub.docker.com/r/dcsunset/clip-share)
+[![License](https://badgen.net/github/license/dcsunset/modaled)](https://github.com/DCsunset/modaled)
+
 Modaled is a fully customizable modal editing package for Emacs.
 
 Unlike many popular modal editing modes,
@@ -16,6 +19,9 @@ You can freely define many different states and their corresponding minor modes 
 
 ## Installation
 
+This package is available on MELPA. You can install it by `M-x package-install RET modaled RET`.
+Or use `use-package` to install it.
+
 To install the package manually, download this repo to Emacs' `load-path`.
 Then add the following to the config file:
 
@@ -28,14 +34,16 @@ you can import the `default.nix` in this repo,
 and then add it to the emacs package:
 
 ```nix
-programs.emacs = let
-  modaled = import /path/to/modaled { inherit pkgs; };
-in {
-  enable = true;
-  extraPackages = epkgs: [
-    modaled
-  ];
-};
+{
+  programs.emacs = let
+    modaled = import /path/to/modaled { inherit pkgs; };
+  in {
+    enable = true;
+    extraPackages = epkgs: [
+      modaled
+    ];
+  };
+}
 ```
 
 ## Usage
