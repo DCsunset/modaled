@@ -1,6 +1,6 @@
 # Modaled
 
-[![MELPA](https://badgen.net//melpa/v/modaled)](https://hub.docker.com/r/dcsunset/clip-share)
+[![MELPA](https://melpa.org/packages/modaled-badge.svg)](https://melpa.org/#/modaled)
 [![License](https://badgen.net/github/license/dcsunset/modaled)](https://github.com/DCsunset/modaled)
 
 Modaled is a fully customizable modal editing package for Emacs.
