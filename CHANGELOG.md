@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.3.0](https://github.com/DCsunset/modaled/compare/v0.2.0...v0.3.0) (2023-05-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove kbd function for defining keys to provide better flexibility
+
+### Features
+
+* support :predicate arg in define-default-state ([8681e23](https://github.com/DCsunset/modaled/commit/8681e23216084ee2af1d2cd826115d0135543ebc))
+
+
+### Bug Fixes
+
+* remove kbd function for defining keys to provide better flexibility ([3324c7e](https://github.com/DCsunset/modaled/commit/3324c7e79dbfab7e0a57390b2879e7edabc55b20))
+* update description and use spaces for indentation ([ff0eee4](https://github.com/DCsunset/modaled/commit/ff0eee4f8830ed022c8772e5910743e9c8b46768))
+
 ## [0.2.0](https://github.com/DCsunset/modaled/compare/v0.1.0...v0.2.0) (2023-05-26)
 
 
