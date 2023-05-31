@@ -19,8 +19,8 @@ You can freely define many different states and their corresponding minor modes 
 
 ## Installation
 
-This package is available on MELPA. You can install it by `M-x package-install RET modaled RET`.
-Or use `use-package` to install it.
+This package is available on MELPA.
+You can install it by `M-x package-install RET modaled RET` or use [use-package](https://github.com/jwiegley/use-package) to install it.
 
 To install the package manually, download this repo to Emacs' `load-path`.
 Then add the following to the config file:
