@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.3.1](https://github.com/DCsunset/modaled/compare/v0.3.0...v0.3.1) (2023-06-12)
+
+
+### Bug Fixes
+
+* make modaled-state buffer local ([3b91bc0](https://github.com/DCsunset/modaled/commit/3b91bc0658e058f5c353a7af90e3f0cef55e6207))
+* remove unnecessary eval function ([2ebe985](https://github.com/DCsunset/modaled/commit/2ebe985f8b170b101f4f8de5f833ba5718761638))
+
 ## [0.3.0](https://github.com/DCsunset/modaled/compare/v0.2.0...v0.3.0) (2023-05-31)
 
 
