@@ -36,13 +36,25 @@
   :prefix "modaled-"
   :link '(url-link :tag "GitHub" "https://github.com/DCsunset/modaled"))
 
+(defmacro modaled-define-local-var (symbol &optional initvalue docstring)
+  "Define SYMBOL as a permanent buffer-local variable.
+
+Optional INITVALUE and DOCSTRING can be provided."
+  `(progn
+     (defvar ,symbol ,initvalue ,docstring)
+     (make-variable-buffer-local ',symbol)
+     ; prevent it from being cleared by changing major mode
+     (put ',symbol 'permanent-local t)))
+
 (defvar modaled-default-state
   nil
   "Default modaled state.")
 
-(defvar modaled-state
-  nil
-  "Current modaled state.")
+; make modaled-state buffer local as buffers have different current states
+(modaled-define-local-var
+ modaled-state
+ nil
+ "Current modaled state")
 
 (defun modaled--get-state-mode (state)
   "Get the symbol of STATE minor mode."
@@ -57,7 +69,7 @@
   "Set current modaled STATE."
   ; disable current mode
   (when modaled-state
-    (funcall (modaled--get-state-mode modaled-state) 0))
+    (funcall (modaled--get-state-mode modaled-state) -1))
   (when state
     (funcall (modaled--get-state-mode state) 1))
   (setq modaled-state state))
