@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.3.2](https://github.com/DCsunset/modaled/compare/v0.3.1...v0.3.2) (2023-06-16)
+
+
+### Bug Fixes
+
+* do nothing if changing to the active state ([0ea6447](https://github.com/DCsunset/modaled/commit/0ea6447c006299ed0520c80cf55789877a020f6f))
+* improve indentation for macros ([3a39f38](https://github.com/DCsunset/modaled/commit/3a39f38d3a87565d640330a87e42feb456ea5785))
+
 ## [0.3.1](https://github.com/DCsunset/modaled/compare/v0.3.0...v0.3.1) (2023-06-12)
 
 
