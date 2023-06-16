@@ -40,6 +40,8 @@
   "Define SYMBOL as a permanent buffer-local variable.
 
 Optional INITVALUE and DOCSTRING can be provided."
+  (declare (indent defun)
+           (doc-string 3))
   `(progn
      (defvar ,symbol ,initvalue ,docstring)
      (make-variable-buffer-local ',symbol)
@@ -86,6 +88,7 @@ Optional INITVALUE and DOCSTRING can be provided."
 
 STATE can be a single state or a list of states.
 If it's a list, KEYBINDINGS will be applied to all states in list."
+  (declare (indent defun))
   (let ((states (if (listp state) state `(,state))))
     (dolist (st states)
       (let ((keymap (modaled--get-state-keymap st)))
@@ -95,6 +98,7 @@ If it's a list, KEYBINDINGS will be applied to all states in list."
 ;;;###autoload
 (defun modaled-define-global-keys (&rest keybindings)
   "Define KEYBINDINGS globally."
+  (declare (indent 0))
   (pcase-dolist (`(,key . ,def) keybindings)
     (global-set-key key def)))
 
@@ -111,6 +115,7 @@ The following options are supported:
 :suppress Remapping `self-insert-command' to `undefined' in the keymap.
 :lighter  Text displayed in the mode line when the state is active.
 :cursor-type  Cursor type for the state."
+  (declare (indent defun))
   (let ((mode (modaled--get-state-mode state))
         (keymap (modaled--get-state-keymap state))
         (keymap-doc (format "Keymap for state %s." state))
@@ -139,6 +144,7 @@ The following options are supported:
 This function accept the following option:
 :predicate  Specify which major modes the default state should be enabled in.
             It is directly passed to `define-globalized-minor-mode'."
+  (declare (indent defun))
   (let ((mode (modaled--get-state-mode state))
         (pred (if (plist-member body :predicate)
                   `(:predicate ,(plist-get body :predicate))
