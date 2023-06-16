@@ -68,13 +68,15 @@ Optional INITVALUE and DOCSTRING can be provided."
 
 ;;;###autoload
 (defun modaled-set-state (state)
-  "Set current modaled STATE."
-  ; disable current mode
-  (when modaled-state
-    (funcall (modaled--get-state-mode modaled-state) -1))
-  (when state
-    (funcall (modaled--get-state-mode state) 1))
-  (setq modaled-state state))
+  "Set current modaled state to STATE."
+  ; skip if the state is already active
+  (unless (equal modaled-state state)
+    ; disable current mode
+    (when modaled-state
+      (funcall (modaled--get-state-mode modaled-state) -1))
+    (when state
+      (funcall (modaled--get-state-mode state) 1))
+    (setq modaled-state state)))
 
 ;;;###autoload
 (defun modaled-set-default-state ()
