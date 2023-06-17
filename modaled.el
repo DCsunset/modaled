@@ -53,10 +53,9 @@ Optional INITVALUE and DOCSTRING can be provided."
   "Default modaled state.")
 
 ; make modaled-state buffer local as buffers have different current states
-(modaled-define-local-var
- modaled-state
- nil
- "Current modaled state")
+(modaled-define-local-var modaled-state
+  nil
+  "Current modaled state.")
 
 (defun modaled--get-state-mode (state)
   "Get the symbol of STATE minor mode."
@@ -68,15 +67,14 @@ Optional INITVALUE and DOCSTRING can be provided."
 
 ;;;###autoload
 (defun modaled-set-state (state)
-  "Set current modaled state to STATE."
-  ; skip if the state is already active
-  (unless (equal modaled-state state)
+  "Set current modaled STATE."
+  ; prevent disabling and enabling the same state
+  (when (and modaled-state (not (equal modaled-state state)))
     ; disable current mode
-    (when modaled-state
-      (funcall (modaled--get-state-mode modaled-state) -1))
-    (when state
-      (funcall (modaled--get-state-mode state) 1))
-    (setq modaled-state state)))
+    (funcall (modaled--get-state-mode modaled-state) -1))
+  (when state
+    (funcall (modaled--get-state-mode state) 1))
+  (setq modaled-state state))
 
 ;;;###autoload
 (defun modaled-set-default-state ()
