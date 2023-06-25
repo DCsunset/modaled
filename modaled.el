@@ -59,11 +59,25 @@ Optional INITVALUE and DOCSTRING can be provided."
 
 (defun modaled--get-state-mode (state)
   "Get the symbol of STATE minor mode."
-  (intern (format "modaled-%s-mode" state)))
+  (intern (format "modaled-%s-state-mode" state)))
 
 (defun modaled--get-state-keymap (state)
   "Get the symbol of STATE keymap."
-  (intern (format "modaled-%s-keymap" state)))
+  (intern (format "modaled-%s-state-keymap" state)))
+
+(defun modaled--get-substate-mode (substate)
+  "Get the symbol of SUBSTATE minor mode."
+  (intern (format "modaled-%s-substate-mode" substate)))
+
+(defun modaled--get-substate-keymap (substate)
+  "Get the symbol of SUBSTATE keymap."
+  (intern (format "modaled-%s-substate-keymap" substate)))
+
+(defun modaled--define-keymap (keymaps keybindings)
+  "Define KEYBINDINGS for all the KEYMAPS."
+  (dolist (keymap keymaps)
+    (pcase-dolist (`(,key . ,def) keybindings)
+      (define-key (symbol-value keymap) key def))))
 
 ;;;###autoload
 (defun modaled-set-state (state)
@@ -90,10 +104,17 @@ STATE can be a single state or a list of states.
 If it's a list, KEYBINDINGS will be applied to all states in list."
   (declare (indent defun))
   (let ((states (if (listp state) state `(,state))))
-    (dolist (st states)
-      (let ((keymap (modaled--get-state-keymap st)))
-        (pcase-dolist (`(,key . ,def) keybindings)
-          (define-key (symbol-value keymap) key def))))))
+    (modaled--define-keymap (mapcar #'modaled--get-state-keymap states) keybindings)))
+
+;;;###autoload
+(defun modaled-define-substate-keys (substate &rest keybindings)
+  "Define KEYBINDINGS for the SUBSTATE.
+
+SUBSTATE can be a single substate or a list of substates.
+If it's a list, KEYBINDINGS will be applied to all substates in list."
+  (declare (indent defun))
+  (let ((states (if (listp substate) substate `(,substate))))
+    (modaled--define-keymap (mapcar #'modaled--get-substate-keymap states) keybindings)))
 
 ;;;###autoload
 (defun modaled-define-global-keys (&rest keybindings)
@@ -103,12 +124,43 @@ If it's a list, KEYBINDINGS will be applied to all states in list."
     (global-set-key key def)))
 
 ;;;###autoload
+(defmacro modaled--define-minor-mode (mode keymap body)
+  "Define a minor MODE with KEYMAP and options in BODY.
+
+The following options are supported for the minor mode:
+:sparse   Use a sparse keymap instead of a full keymap.
+:suppress Remapping `self-insert-command' to `undefined' in the keymap.
+:lighter  Text displayed in the mode line when the state is active.
+:cursor-type  Cursor type for the state."
+  (let ((mode-name (symbol-name mode))
+        (sparse (plist-get body :sparse))
+        (suppress (plist-get body :suppress))
+        (lighter (plist-get body :lighter))
+        (cursor-type (plist-get body :cursor-type)))
+    `(progn
+      (defvar ,keymap
+        (if ,sparse (make-sparse-keymap) (make-keymap))
+        ,(format "Keymap for %s." mode-name))
+      (when ,suppress
+        (suppress-keymap ,keymap))
+      (define-minor-mode ,mode
+        ,(format "Modaled minor mode %s" mode-name)
+        :lighter ,lighter
+        :keymap ,keymap
+        (when ,cursor-type
+          (setq-local cursor-type ,cursor-type))))))
+
+;;;###autoload
 (defmacro modaled-define-state (state &rest body)
   "Define a new STATE minor mode with options in BODY.
 
+STATE minor modes are managed and only one should be active.
+You should change the state by `modaled-set-state' or
+`modaled-set-default-state'.
+
 This function will generate the definitions for the following items:
-1. modaled-STATE-mode: Minor mode for the state.
-2. modaled-STATE-keymap: Keymap for the state.
+1. modaled-STATE-state-mode: Minor mode for the state.
+2. modaled-STATE-state-keymap: Keymap for the state.
 
 The following options are supported:
 :sparse   Use a sparse keymap instead of a full keymap.
@@ -117,25 +169,29 @@ The following options are supported:
 :cursor-type  Cursor type for the state."
   (declare (indent defun))
   (let ((mode (modaled--get-state-mode state))
-        (keymap (modaled--get-state-keymap state))
-        (keymap-doc (format "Keymap for state %s." state))
-        (sparse (plist-get body :sparse))
-        (suppress (plist-get body :suppress))
-        (lighter (plist-get body :lighter))
-        (cursor-type (plist-get body :cursor-type))
-        (doc (format "Modaled minor mode for state %s" state)))
-    `(progn
-      (defvar ,keymap
-        (if ,sparse (make-sparse-keymap) (make-keymap))
-        ,keymap-doc)
-      (when ,suppress
-        (suppress-keymap ,keymap))
-      (define-minor-mode ,mode
-        ,doc
-        :lighter ,lighter
-        :keymap ,keymap
-        (when ,cursor-type
-          (setq-local cursor-type ,cursor-type))))))
+        (keymap (modaled--get-state-keymap state)))
+    `(modaled--define-minor-mode ,mode ,keymap ,body)))
+
+;;;###autoload
+(defmacro modaled-define-substate (substate &rest body)
+  "Define a new SUBSTATE minor mode with options in BODY.
+
+SUBSTATE minor modes are unmanaged and multiple substates can be active.
+You can enable/disable it by calling the minor mode function directly.
+
+This function will generate the definitions for the following items:
+1. modaled-STATE-substate-mode: Minor mode for the state.
+2. modaled-STATE-substate-keymap: Keymap for the state.
+
+The following options are supported:
+:sparse   Use a sparse keymap instead of a full keymap.
+:suppress Remapping `self-insert-command' to `undefined' in the keymap.
+:lighter  Text displayed in the mode line when the state is active.
+:cursor-type  Cursor type for the state."
+  (declare (indent defun))
+  (let ((mode (modaled--get-substate-mode substate))
+        (keymap (modaled--get-substate-keymap substate)))
+    `(modaled--define-minor-mode ,mode ,keymap ,body)))
 
 ;;;###autoload
 (defmacro modaled-define-default-state (state &rest body)
