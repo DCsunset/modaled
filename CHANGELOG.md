@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.4.0](https://github.com/DCsunset/modaled/compare/v0.3.3...v0.4.0) (2023-06-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* add substate and rename state keymap and mode
+
+### Features
+
+* add substate and rename state keymap and mode ([3999b7f](https://github.com/DCsunset/modaled/commit/3999b7ff94d01311871f29263eb03f3d4cdf8219))
+
 ## [0.3.3](https://github.com/DCsunset/modaled/compare/v0.3.2...v0.3.3) (2023-06-17)
 
 
