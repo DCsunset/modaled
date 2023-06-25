@@ -10,7 +10,7 @@ Modaled doesn't provide any keybindings
 and nor does it come with any minor modes by default.
 
 This package provides util functions to help you build your own keybindings and minor modes.
-It is inspired by [modalka](https://github.com/mrkkrp/modalka) and [meow](https://github.com/meow-edit/meow),
+It is inspired by [evil](https://github.com/emacs-evil/evil), [modalka](https://github.com/mrkkrp/modalka), and [meow](https://github.com/meow-edit/meow),
 but it supports building your own minor modes without any predefined states.
 Compared to modalka, Modaled supports creating multiple minor modes and comes with no default mode,
 which makes it possible to implement different states in modal editing and different keybindings for different situations.
@@ -48,10 +48,12 @@ and then add it to the emacs package:
 
 ## Usage
 
+### Basics
+
 You can define your own state and keybindings by `modaled-define-state STATE &rest BODY`.
 You can set the lighter or cursor type in body.
-It will create a minor mode `modaled-STATE-mode` and keymap `modaled-STATE-keymap` automatically.
-You can set up the keymap by `modaled-define-keys` (or directly using `define-key`) and enable the minor mode whenever you want.
+It will create a minor mode `modaled-STATE-state-mode` and keymap `modaled-STATE-state-keymap` automatically.
+You can set up the keymap by `modaled-define-state-keys` (or directly using `define-key`) and enable the minor mode whenever you want.
 
 ```emacs-lisp
 (modaled-define-state "normal"
@@ -62,7 +64,7 @@ You can set up the keymap by `modaled-define-keys` (or directly using `define-ke
   '("h" . backward-char)
   '("l" . forward-char)
   '("k" . previous-line)
-  '("j" . next-line)))
+  '("j" . next-line))
 ```
 
 To change the current state, you can use `modaled-set-state` or `modaled-set-default-state`:
@@ -87,8 +89,8 @@ Note that the default state must be defined by `modaled-define-state` before you
   :cursor-type 'bar
   :lighter "[INS]")
 
-; modaled-define-keys also supports defining keys for multiple states (suppose select state is already defined)
-(modaled-define-keys '("insert" "select")
+; modaled-define-state-keys also supports defining keys for multiple states (suppose select state is already defined)
+(modaled-define-state-keys '("insert" "select")
   ; bind a key to change back to default state from other states
   `(,(kbd "ESC") . modaled-set-default-state))
 
@@ -102,12 +104,46 @@ To enable the default state only in specific modes, use `:predicate` option in `
 ```emacs-lisp
 ; only in c++-mode
 (modaled-define-default-state "normal" :predicate '(c++-mode))
-; set default state except c++-mode
-(modaled-define-default-state "normal" :predicate '((not c++-mode) t))
+; or set default state except c++-mode
+; (modaled-define-default-state "normal" :predicate '((not c++-mode) t))
 (modaled-global-mode 1)
 ```
 
 To see supported arguments for each function, use `describe-function` (usually bound to `C-h f`) to see the docs.
+
+### Substates
+
+Modaled also supports defining substates.
+In Modaled, states are managed like a major mode (which means only one state should be enabled),
+while substates are unmanaged like a minor mode (multiple substates can be active at the same time).
+The current state is stored in variable `modaled-state`.
+You should only use `modaled-set-state` or `modaled-set-default-state` to change a state,
+but you can enable substates by calling the minor mode function directly.
+
+Similarly, substates are defined by `modaled-define-substate` and keybindings are defined by `modaled-define-substate-keys`.
+The function parameters are the same as those for states.
+The corresponding minor mode and keymap are `modaled-SUBSTATE-substate-mode` and `modaled-SUBSTATE-substate-keymap`.
+
+Substates are more flexible than states as you manage them directly.
+One use case is to enable some keybindings only in a specific major mode.
+The example below shows how to define a substate only for org-mode and normal state:
+
+```emacs-lisp
+(modaled-define-substate "org"
+  :suppress t)
+(hx-define-substate-keys "org"
+  (" o" "org open" nil (call-interactively #'org-open-at-point)))
+; enable org substate when in normal state
+(add-variable-watcher
+ 'modaled-state
+ (lambda (sym newval op where)
+   ; suppress the warning of unused vars
+   (ignore sym op where)
+   (when (eq major-mode 'org-mode)
+     (let ((arg (if (equal newval "normal") 1 -1)))
+       (modaled-org-substate-mode arg)))))
+```
+
 
 ## License
 
