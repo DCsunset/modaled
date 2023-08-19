@@ -57,19 +57,23 @@ Optional INITVALUE and DOCSTRING can be provided."
   nil
   "Current modaled state.")
 
-(defun modaled--get-state-mode (state)
+;;;###autoload
+(defun modaled-get-state-mode (state)
   "Get the symbol of STATE minor mode."
   (intern (format "modaled-%s-state-mode" state)))
 
-(defun modaled--get-state-keymap (state)
+;;;###autoload
+(defun modaled-get-state-keymap (state)
   "Get the symbol of STATE keymap."
   (intern (format "modaled-%s-state-keymap" state)))
 
-(defun modaled--get-substate-mode (substate)
+;;;###autoload
+(defun modaled-get-substate-mode (substate)
   "Get the symbol of SUBSTATE minor mode."
   (intern (format "modaled-%s-substate-mode" substate)))
 
-(defun modaled--get-substate-keymap (substate)
+;;;###autoload
+(defun modaled-get-substate-keymap (substate)
   "Get the symbol of SUBSTATE keymap."
   (intern (format "modaled-%s-substate-keymap" substate)))
 
@@ -87,9 +91,9 @@ Optional INITVALUE and DOCSTRING can be provided."
   ; prevent disabling and enabling the same state
   (when (and modaled-state (not (equal modaled-state state)))
     ; disable current mode
-    (funcall (modaled--get-state-mode modaled-state) -1))
+    (funcall (modaled-get-state-mode modaled-state) -1))
   (when state
-    (funcall (modaled--get-state-mode state) 1))
+    (funcall (modaled-get-state-mode state) 1))
   (setq modaled-state state))
 
 ;;;###autoload
@@ -106,7 +110,7 @@ STATE can be a single state or a list of states.
 If it's a list, KEYBINDINGS will be applied to all states in list."
   (declare (indent defun))
   (let ((states (if (listp state) state (list state))))
-    (modaled--define-keymap (mapcar #'modaled--get-state-keymap states) keybindings)))
+    (modaled--define-keymap (mapcar #'modaled-get-state-keymap states) keybindings)))
 
 ;;;###autoload
 (defun modaled-define-substate-keys (substate &rest keybindings)
@@ -116,7 +120,7 @@ SUBSTATE can be a single substate or a list of substates.
 If it's a list, KEYBINDINGS will be applied to all substates in list."
   (declare (indent defun))
   (let ((states (if (listp substate) substate `(,substate))))
-    (modaled--define-keymap (mapcar #'modaled--get-substate-keymap states) keybindings)))
+    (modaled--define-keymap (mapcar #'modaled-get-substate-keymap states) keybindings)))
 
 ;;;###autoload
 (defun modaled-define-global-keys (&rest keybindings)
@@ -172,8 +176,8 @@ This function will generate the definitions for the following items:
 
 See all available options in `modaled--define-minor-mode'."
   (declare (indent defun))
-  (let ((mode (modaled--get-state-mode state))
-        (keymap (modaled--get-state-keymap state)))
+  (let ((mode (modaled-get-state-mode state))
+        (keymap (modaled-get-state-keymap state)))
     `(modaled--define-minor-mode ,mode ,keymap ,body)))
 
 ;;;###autoload
@@ -189,8 +193,8 @@ This function will generate the definitions for the following items:
 
 See all available options in `modaled--define-minor-mode'."
   (declare (indent defun))
-  (let ((mode (modaled--get-substate-mode substate))
-        (keymap (modaled--get-substate-keymap substate)))
+  (let ((mode (modaled-get-substate-mode substate))
+        (keymap (modaled-get-substate-keymap substate)))
     `(modaled--define-minor-mode ,mode ,keymap ,body)))
 
 ;;;###autoload
@@ -201,7 +205,7 @@ This function accept the following option:
 :predicate  Specify which major modes the default state should be enabled in.
             It is directly passed to `define-globalized-minor-mode'."
   (declare (indent defun))
-  (let ((mode (modaled--get-state-mode state))
+  (let ((mode (modaled-get-state-mode state))
         (pred (if (plist-member body :predicate)
                   `(:predicate ,(plist-get body :predicate))
                 '())))
