@@ -29,22 +29,8 @@ Then add the following to the config file:
 (require 'modaled)
 ```
 
-If you are using Nix home-manager,
-you can import the `default.nix` in this repo,
-and then add it to the emacs package:
-
-```nix
-{
-  programs.emacs = let
-    modaled = import /path/to/modaled { inherit pkgs; };
-  in {
-    enable = true;
-    extraPackages = epkgs: [
-      modaled
-    ];
-  };
-}
-```
+If you are using Nix flake,
+you can directly add this package to your inputs and use it in emacsPackages.
 
 ## Usage
 
