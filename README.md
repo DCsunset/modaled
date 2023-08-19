@@ -45,7 +45,9 @@ You can set up the keymap by `modaled-define-state-keys` (or directly using `def
 (modaled-define-state "normal"
   :suppress t
   :lighter "[NOR]"
-  :cursor-type 'box)
+  :cursor-type 'box
+  ;; add it to emulation-mode-map-alist to increase priority
+  :emulation t)
 (modaled-define-keys "normal"
   '("h" . backward-char)
   '("l" . forward-char)
