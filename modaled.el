@@ -170,11 +170,7 @@ This function will generate the definitions for the following items:
 1. modaled-STATE-state-mode: Minor mode for the state.
 2. modaled-STATE-state-keymap: Keymap for the state.
 
-The following options are supported:
-:sparse   Use a sparse keymap instead of a full keymap.
-:suppress Remapping `self-insert-command' to `undefined' in the keymap.
-:lighter  Text displayed in the mode line when the state is active.
-:cursor-type  Cursor type for the state."
+See all available options in `modaled--define-minor-mode'."
   (declare (indent defun))
   (let ((mode (modaled--get-state-mode state))
         (keymap (modaled--get-state-keymap state)))
@@ -188,14 +184,10 @@ SUBSTATE minor modes are unmanaged and multiple substates can be active.
 You can enable/disable it by calling the minor mode function directly.
 
 This function will generate the definitions for the following items:
-1. modaled-STATE-substate-mode: Minor mode for the state.
-2. modaled-STATE-substate-keymap: Keymap for the state.
+1. modaled-SUBSTATE-substate-mode: Minor mode for the state.
+2. modaled-SUBSTATE-substate-keymap: Keymap for the state.
 
-The following options are supported:
-:sparse   Use a sparse keymap instead of a full keymap.
-:suppress Remapping `self-insert-command' to `undefined' in the keymap.
-:lighter  Text displayed in the mode line when the state is active.
-:cursor-type  Cursor type for the state."
+See all available options in `modaled--define-minor-mode'."
   (declare (indent defun))
   (let ((mode (modaled--get-substate-mode substate))
         (keymap (modaled--get-substate-keymap substate)))
