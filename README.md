@@ -50,7 +50,9 @@ You can set up the keymap by `modaled-define-state-keys` (or directly using `def
   '("h" . backward-char)
   '("l" . forward-char)
   '("k" . previous-line)
-  '("j" . next-line))
+  '("j" . next-line)
+  ;; you can also bind multiple keys to a command
+  '(("a" "b") . (lambda () (interative) (message "hello"))))
 ```
 
 To change the current state, you can use `modaled-set-state` or `modaled-set-default-state`:

@@ -77,7 +77,9 @@ Optional INITVALUE and DOCSTRING can be provided."
   "Define KEYBINDINGS for all the KEYMAPS."
   (dolist (keymap keymaps)
     (pcase-dolist (`(,key . ,def) keybindings)
-      (define-key (symbol-value keymap) key def))))
+      (let ((keys (if (listp key) key (list key))))
+        (dolist (k keys)
+          (define-key (symbol-value keymap) k def))))))
 
 ;;;###autoload
 (defun modaled-set-state (state)
@@ -103,7 +105,7 @@ Optional INITVALUE and DOCSTRING can be provided."
 STATE can be a single state or a list of states.
 If it's a list, KEYBINDINGS will be applied to all states in list."
   (declare (indent defun))
-  (let ((states (if (listp state) state `(,state))))
+  (let ((states (if (listp state) state (list state))))
     (modaled--define-keymap (mapcar #'modaled--get-state-keymap states) keybindings)))
 
 ;;;###autoload
@@ -121,7 +123,9 @@ If it's a list, KEYBINDINGS will be applied to all substates in list."
   "Define KEYBINDINGS globally."
   (declare (indent 0))
   (pcase-dolist (`(,key . ,def) keybindings)
-    (global-set-key key def)))
+    (let ((keys (if (listp key) key (list key))))
+      (dolist (k keys)
+        (global-set-key k def)))))
 
 ;;;###autoload
 (defmacro modaled--define-minor-mode (mode keymap body)
