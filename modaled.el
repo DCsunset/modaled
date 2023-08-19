@@ -131,12 +131,14 @@ The following options are supported for the minor mode:
 :sparse   Use a sparse keymap instead of a full keymap.
 :suppress Remapping `self-insert-command' to `undefined' in the keymap.
 :lighter  Text displayed in the mode line when the state is active.
-:cursor-type  Cursor type for the state."
+:cursor-type  Cursor type for the state.
+:emulation    Add this mode and keymap to `emulation-mode-map-alists'."
   (let ((mode-name (symbol-name mode))
         (sparse (plist-get body :sparse))
         (suppress (plist-get body :suppress))
         (lighter (plist-get body :lighter))
-        (cursor-type (plist-get body :cursor-type)))
+        (cursor-type (plist-get body :cursor-type))
+        (emulation (plist-get body :emulation)))
     `(progn
       (defvar ,keymap
         (if ,sparse (make-sparse-keymap) (make-keymap))
@@ -148,7 +150,9 @@ The following options are supported for the minor mode:
         :lighter ,lighter
         :keymap ,keymap
         (when ,cursor-type
-          (setq-local cursor-type ,cursor-type))))))
+          (setq-local cursor-type ,cursor-type)))
+      (when ,emulation
+        (add-to-list 'emulation-mode-map-alists '(,mode . ,keymap))))))
 
 ;;;###autoload
 (defmacro modaled-define-state (state &rest body)
