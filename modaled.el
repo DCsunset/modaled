@@ -52,6 +52,10 @@ Optional INITVALUE and DOCSTRING can be provided."
   nil
   "Default modaled state.")
 
+(defvar modaled--emulation-mode-map-alist
+  nil
+  "An alist of modaled mode map to add to `emulation-mode-map-alists'.")
+
 ; make modaled-state buffer local as buffers have different current states
 (modaled-define-local-var modaled-state
   nil
@@ -140,13 +144,13 @@ The following options are supported for the minor mode:
 :suppress Remapping `self-insert-command' to `undefined' in the keymap.
 :lighter  Text displayed in the mode line when the state is active.
 :cursor-type  Cursor type for the state.
-:emulation    Add this mode and keymap to `emulation-mode-map-alists'."
+:no-emulation Do not add this mode and keymap to `emulation-mode-map-alists'."
   (let ((mode-name (symbol-name mode))
         (sparse (plist-get body :sparse))
         (suppress (plist-get body :suppress))
         (lighter (plist-get body :lighter))
         (cursor-type (plist-get body :cursor-type))
-        (emulation (plist-get body :emulation)))
+        (no-emulation (plist-get body :no-emulation)))
     `(progn
       (defvar ,keymap
         (if ,sparse (make-sparse-keymap) (make-keymap))
@@ -159,8 +163,12 @@ The following options are supported for the minor mode:
         :keymap ,keymap
         (when ,cursor-type
           (setq-local cursor-type ,cursor-type)))
-      (when ,emulation
-        (add-to-list 'emulation-mode-map-alists '(,mode . ,keymap))))))
+      (unless ,no-emulation
+        ;; the alist may not have been defined when autoloaded
+        (unless (boundp 'modaled--emulation-mode-map-alist)
+          (setq modaled--emulation-mode-map-alist nil))
+        (add-to-list 'modaled--emulation-mode-map-alist (cons ',mode ,keymap))
+        (add-to-list 'emulation-mode-map-alists modaled--emulation-mode-map-alist)))))
 
 ;;;###autoload
 (defmacro modaled-define-state (state &rest body)

@@ -39,15 +39,16 @@ you can directly add this package to your inputs and use it in emacsPackages.
 You can define your own state and keybindings by `modaled-define-state STATE &rest BODY`.
 You can set the lighter or cursor type in body.
 It will create a minor mode `modaled-STATE-state-mode` and keymap `modaled-STATE-state-keymap` automatically.
+The mode is added to `emulation-mode-map-alists` by default to increase its priority unless `:no-emulation` is specified.
 You can set up the keymap by `modaled-define-state-keys` (or directly using `define-key`) and enable the minor mode whenever you want.
 
 ```emacs-lisp
 (modaled-define-state "normal"
   :suppress t
+  ;; to prevent it from being added to emulation-mode-map-alist
+  ; :no-emulation t
   :lighter "[NOR]"
-  :cursor-type 'box
-  ;; add it to emulation-mode-map-alist to increase priority
-  :emulation t)
+  :cursor-type 'box)
 (modaled-define-keys "normal"
   '("h" . backward-char)
   '("l" . forward-char)
