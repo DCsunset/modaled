@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.5.0](https://github.com/DCsunset/modaled/compare/v0.4.0...v0.5.0) (2023-08-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* add keymap to emulation-mode-map-alists by default
+
+### Features
+
+* add keymap to emulation-mode-map-alists by default ([afae3cb](https://github.com/DCsunset/modaled/commit/afae3cb778fb3f2f65eb6f4f06e4cfcefb427a0c))
+* make internal functions regarding the mode symbols public ([9426c28](https://github.com/DCsunset/modaled/commit/9426c286bef2a9e0c43146af4b8fde3f6a3bc7a6))
+* support adding state and its keymap to emulation-mode-map-alist ([60997f6](https://github.com/DCsunset/modaled/commit/60997f6d562008303e3768465a9116169306d00e))
+* support binding multiple keys to the same command ([e47bd42](https://github.com/DCsunset/modaled/commit/e47bd427a2161193b85dc6121c975833f867f47e))
+
+
+### Bug Fixes
+
+* fix docs of functions and macros ([58a21b2](https://github.com/DCsunset/modaled/commit/58a21b213d63ec938f4bffe1b42738d0efc2d42c))
+
 ## [0.4.0](https://github.com/DCsunset/modaled/compare/v0.3.3...v0.4.0) (2023-06-25)
 
 
