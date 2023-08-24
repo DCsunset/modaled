@@ -83,6 +83,8 @@ Note that the default state must be defined by `modaled-define-state` before you
 ```emacs-lisp
 (modaled-define-state "insert"
   :sparse t
+  ;; insert state must be no-suppress to support inserting char
+  :no-suppress t
   :cursor-type 'bar
   :lighter "[INS]")
 
