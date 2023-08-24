@@ -40,11 +40,14 @@ You can define your own state and keybindings by `modaled-define-state STATE &re
 You can set the lighter or cursor type in body.
 It will create a minor mode `modaled-STATE-state-mode` and keymap `modaled-STATE-state-keymap` automatically.
 The mode is added to `emulation-mode-map-alists` by default to increase its priority unless `:no-emulation` is specified.
+Besides, the keymap is suppressed by default, which means using undefined keys will result in an error instead of inserting the raw character
+unless `:no-suppress` is set to true.
 You can set up the keymap by `modaled-define-state-keys` (or directly using `define-key`) and enable the minor mode whenever you want.
 
 ```emacs-lisp
 (modaled-define-state "normal"
-  :suppress t
+  ; use no-suppress to allow inserting the char if keybinding is not defined
+  ; :no-suppress t
   ;; to prevent it from being added to emulation-mode-map-alist
   ; :no-emulation t
   :lighter "[NOR]"
@@ -120,8 +123,7 @@ One use case is to enable some keybindings only in a specific major mode.
 The example below shows how to define a substate only for org-mode and normal state:
 
 ```emacs-lisp
-(modaled-define-substate "org"
-  :suppress t)
+(modaled-define-substate "org")
 (hx-define-substate-keys "org"
   (" o" "org open" nil (call-interactively #'org-open-at-point)))
 ; enable org substate when in normal state

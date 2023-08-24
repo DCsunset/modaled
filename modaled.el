@@ -14,12 +14,12 @@
 ;; it under the terms of the GNU Affero General Public License as published
 ;; by the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
-;; 
+;;
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU Affero General Public License for more details.
-;; 
+;;
 ;; You should have received a copy of the GNU Affero General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -140,14 +140,14 @@ If it's a list, KEYBINDINGS will be applied to all substates in list."
   "Define a minor MODE with KEYMAP and options in BODY.
 
 The following options are supported for the minor mode:
-:sparse   Use a sparse keymap instead of a full keymap.
-:suppress Remapping `self-insert-command' to `undefined' in the keymap.
-:lighter  Text displayed in the mode line when the state is active.
+:sparse       Use a sparse keymap instead of a full keymap.
+:no-suppress  Do not Remap `self-insert-command' to `undefined' in the keymap.
+:lighter      Text displayed in the mode line when the state is active.
 :cursor-type  Cursor type for the state.
 :no-emulation Do not add this mode and keymap to `emulation-mode-map-alists'."
   (let ((mode-name (symbol-name mode))
         (sparse (plist-get body :sparse))
-        (suppress (plist-get body :suppress))
+        (no-suppress (plist-get body :no-suppress))
         (lighter (plist-get body :lighter))
         (cursor-type (plist-get body :cursor-type))
         (no-emulation (plist-get body :no-emulation)))
@@ -155,7 +155,7 @@ The following options are supported for the minor mode:
       (defvar ,keymap
         (if ,sparse (make-sparse-keymap) (make-keymap))
         ,(format "Keymap for %s." mode-name))
-      (when ,suppress
+      (unless ,no-suppress
         (suppress-keymap ,keymap))
       (define-minor-mode ,mode
         ,(format "Modaled minor mode %s" mode-name)
