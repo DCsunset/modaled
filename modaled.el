@@ -4,7 +4,7 @@
 ;;
 ;; Author: DCsunset
 ;; URL: https://github.com/DCsunset/modaled
-;; Version: 0.5.0
+;; Version: 0.6.0
 ;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: convenience, modal-editing
 ;;

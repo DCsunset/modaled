@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.6.0](https://github.com/DCsunset/modaled/compare/v0.5.0...v0.6.0) (2023-08-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* suppress keymap by default and add no-suppress option
+
+### Features
+
+* suppress keymap by default and add no-suppress option ([6cece47](https://github.com/DCsunset/modaled/commit/6cece47abd2a24b0f3238ae1789c05cc8b35ccb6))
+
+
+### Bug Fixes
+
+* update docs for insert state ([76905b0](https://github.com/DCsunset/modaled/commit/76905b05a75b6ef92594383121d9d84ec3bf4988))
+
 ## [0.5.0](https://github.com/DCsunset/modaled/compare/v0.4.0...v0.5.0) (2023-08-20)
 
 
