@@ -29,6 +29,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (defgroup modaled nil
   "Build your own minor modes for modal editing."
   :group 'editing
@@ -48,13 +50,13 @@ Optional INITVALUE and DOCSTRING can be provided."
      ; prevent it from being cleared by changing major mode
      (put ',symbol 'permanent-local t)))
 
-(defvar modaled-default-state
-  nil
-  "Default modaled state.")
-
 (defvar modaled--emulation-mode-map-alist
   nil
   "An alist of modaled mode map to add to `emulation-mode-map-alists'.")
+
+(modaled-define-local-var modaled-default-state
+  nil
+  "Default modaled state.")
 
 ; make modaled-state buffer local as buffers have different current states
 (modaled-define-local-var modaled-state
@@ -205,29 +207,58 @@ See all available options in `modaled--define-minor-mode'."
         (keymap (modaled-get-substate-keymap substate)))
     `(modaled--define-minor-mode ,mode ,keymap ,body)))
 
-;;;###autoload
-(defmacro modaled-define-default-state (state &rest body)
-  "Define default STATE used in global minor mode with options in BODY.
+(modaled-define-local-var
+  modaled--initialized
+  nil
+  "Non-nil if this buffer is initalized by modaled")
 
-This function accept the following option:
-:predicate  Specify which major modes the default state should be enabled in.
-            It is directly passed to `define-globalized-minor-mode'."
+(defun modaled--initialize (body)
+  "Initalize modaled with specs in BODY.
+
+THe BODY can be a list containing the name of a state,
+or a list of cons in format (state . modeList).
+The default state is enabled only when
+the current major mode is in the modeList or the modeList is nil.
+It stops iterating through the list once a match is found."
+  (when (not modaled--initialized)
+    (setq modaled--initialized t)
+    (let ((state
+           (cl-dolist (def body)
+             (when (stringp def)
+               (cl-return def))
+             (let ((modes (cdr def)))
+               (when (or (not modes)
+                         (memq major-mode modes))
+                 (cl-return (car def)))))))
+      (when state
+        (setq modaled-default-state state)
+        (unless (minibufferp)
+          ;; enable default modaled minor modes
+          (modaled-set-default-state))))))
+
+(defun modaled--initialize-all-buffers (body)
+  "Initialize all existing buffers with BODY."
+	(dolist (buf (buffer-list))
+	  (with-current-buffer buf
+      (modaled--initialize body))))
+
+;;;###autoload
+(defun modaled-define-default-state (&rest body)
+  "Define default state with specs in BODY.
+
+See `modaled--initialize' for the argument format."
   (declare (indent defun))
-  (let ((mode (modaled-get-state-mode state))
-        (pred (if (plist-member body :predicate)
-                  `(:predicate ,(plist-get body :predicate))
-                '())))
-    `(progn
-       (setq modaled-default-state ,state)
-       (define-globalized-minor-mode modaled-global-mode
-         ,mode
-         (lambda ()
-           (unless (minibufferp)
-             ; enable default modaled minor modes
-             (modaled-set-default-state)))
-         :require 'modaled
-         :group 'modaled
-         ,@pred))))
+  ;; update after major mode changes
+  (add-hook 'after-change-major-mode-hook
+            (lambda ()
+              ; re-init
+              (setq modaled--initialized nil)
+              (modaled--initialize body)))
+  ;; update on creation (no major mode change yet)
+  (add-hook 'buffer-list-update-hook
+            (lambda () (modaled--initialize-all-buffers body)))
+  ;; enable it for all existing buffers
+  (modaled--initialize-all-buffers body))
 
 (provide 'modaled)
 
