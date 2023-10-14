@@ -62,6 +62,18 @@ You can set up the keymap by `modaled-define-state-keys` (or directly using `def
   '("j" . next-line)
   ;; you can also bind multiple keys to a command
   '(("a" "b") . (lambda () (interative) (message "hello"))))
+
+(modaled-define-state "insert"
+  :sparse t
+  ;; insert state must be no-suppress to support inserting char
+  :no-suppress t
+  :cursor-type 'bar
+  :lighter "[INS]")
+
+; modaled-define-state-keys also supports defining keys for multiple states (suppose select state is already defined)
+(modaled-define-state-keys '("insert" "select")
+  ; bind a key to change back to default state from other states
+  `(<escape> . modaled-set-default-state))
 ```
 
 To change the current state, you can use `modaled-set-state` or `modaled-set-default-state`:
@@ -76,36 +88,18 @@ To change the current state, you can use `modaled-set-state` or `modaled-set-def
 ```
 
 To enable Modaled globally, you will need to define a default state by `modaled-define-default-state STATE`.
-This will create a globalized minor mode `modaled-global-mode` for the default state minor mode you specified.
-You can later enable the global mode directly using it.
-Note that the default state must be defined by `modaled-define-state` before you call `modaled-define-default-state`.
+This will create hooks to enable the default state on buffer creation and major mode change.
+You can set one global default state or different default states for different major modes:
 
 ```emacs-lisp
-(modaled-define-state "insert"
-  :sparse t
-  ;; insert state must be no-suppress to support inserting char
-  :no-suppress t
-  :cursor-type 'bar
-  :lighter "[INS]")
-
-; modaled-define-state-keys also supports defining keys for multiple states (suppose select state is already defined)
-(modaled-define-state-keys '("insert" "select")
-  ; bind a key to change back to default state from other states
-  `(,(kbd "ESC") . modaled-set-default-state))
-
+; set normal as default state
 (modaled-define-default-state "normal")
-(modaled-global-mode 1)
-```
 
-To enable the default state only in specific modes, use `:predicate` option in `modaled-defined-default-state`
-(see more [:predicate usage](https://www.gnu.org/software/emacs/manual/html_node/elisp/Defining-Minor-Modes.html#index-define_002dglobalized_002dminor_002dmode)):
-
-```emacs-lisp
-; only in c++-mode
-(modaled-define-default-state "normal" :predicate '(c++-mode))
-; or set default state except c++-mode
-; (modaled-define-default-state "normal" :predicate '((not c++-mode) t))
-(modaled-global-mode 1)
+; set insert as default state for (w)dired-mode
+; normal for others
+(modaled-define-default-state
+  '("insert" dired-mode wdired-mode)
+  '("normal"))
 ```
 
 To see supported arguments for each function, use `describe-function` (usually bound to `C-h f`) to see the docs.
