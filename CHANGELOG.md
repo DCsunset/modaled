@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.7.0](https://github.com/DCsunset/modaled/compare/v0.6.0...v0.7.0) (2023-10-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* support different default states for different major modes
+
+### Features
+
+* support different default states for different major modes ([20436da](https://github.com/DCsunset/modaled/commit/20436da84f15c0159341b52b53ae833c08c45b56))
+
+
+### Misc
+
+* add more type output in changelog ([cc1212a](https://github.com/DCsunset/modaled/commit/cc1212a893e6bc5e668ad24589cfb175a8069304))
+* update docs for default states ([f4aae9d](https://github.com/DCsunset/modaled/commit/f4aae9d0c433056fc536136959949035b9088a23))
+
 ## [0.6.0](https://github.com/DCsunset/modaled/compare/v0.5.0...v0.6.0) (2023-08-25)
 
 
