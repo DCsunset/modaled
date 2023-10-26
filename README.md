@@ -77,7 +77,7 @@ You can set up the keymap by `modaled-define-keys` (or directly using `define-ke
   :states '("insert" "normal")
   ; bind a key to change back to default state from other states
   :bind
-  '([escape] . modaled-set-default-state))
+  '(([escape] . modaled-set-default-state)))
 ```
 
 To change the current state, you can use `modaled-set-state` or `modaled-set-default-state`:
