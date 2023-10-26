@@ -45,7 +45,7 @@ The mode is added to `emulation-mode-map-alists` by default to increase its prio
 Besides, the keymap is suppressed by default, which means using undefined keys will result in an error instead of inserting the raw character
 unless `:no-suppress` is set to true.
 
-You can set up the keymap by `modaled-define-state-keys` (or directly using `define-key`) and enable the minor mode whenever you want.
+You can set up the keymap by `modaled-define-keys` (or directly using `define-key`) and enable the minor mode whenever you want.
 
 ```emacs-lisp
 (modaled-define-state "normal"
@@ -55,13 +55,16 @@ You can set up the keymap by `modaled-define-state-keys` (or directly using `def
   ; :no-emulation t
   :lighter "[NOR]"
   :cursor-type 'box)
-(modaled-define-keys "normal"
-  '("h" . backward-char)
-  '("l" . forward-char)
-  '("k" . previous-line)
-  '("j" . next-line)
-  ;; you can also bind multiple keys to a command
-  '(("a" "b") . (lambda () (interative) (message "hello"))))
+; modaled-define-keys supports binding keys for multiple states or substates or globally
+(modaled-define-keys
+  :states '("normal")
+  :bind
+  `(("h" . backward-char)
+    ("l" . forward-char)
+    ("k" . previous-line)
+    ("j" . next-line)
+    ;; you can also bind multiple keys to a command
+    ("a" "b") . ,(lambda () (interative) (message "hello"))))
 
 (modaled-define-state "insert"
   :sparse t
@@ -69,11 +72,11 @@ You can set up the keymap by `modaled-define-state-keys` (or directly using `def
   :no-suppress t
   :cursor-type 'bar
   :lighter "[INS]")
-
-; modaled-define-state-keys also supports defining keys for multiple states (suppose select state is already defined)
-(modaled-define-state-keys '("insert" "select")
+(modaled-define-keys
+  :states '("insert" "normal")
   ; bind a key to change back to default state from other states
-  `(<escape> . modaled-set-default-state))
+  :bind
+  '([escape] . modaled-set-default-state))
 ```
 
 To change the current state, you can use `modaled-set-state` or `modaled-set-default-state`:
@@ -113,7 +116,7 @@ The current state is stored in variable `modaled-state`.
 You should only use `modaled-set-state` or `modaled-set-default-state` to change a state,
 but you can enable substates by calling the minor mode function directly.
 
-Similarly, substates are defined by `modaled-define-substate` and keybindings are defined by `modaled-define-substate-keys`.
+Similarly, substates are defined by `modaled-define-substate` and keybindings are defined by `modaled-define-keys`.
 The function parameters are the same as those for states.
 The corresponding minor mode and keymap are `modaled-SUBSTATE-substate-mode` and `modaled-SUBSTATE-substate-keymap`.
 
@@ -123,8 +126,10 @@ The example below shows how to define a substate only for org-mode and normal st
 
 ```emacs-lisp
 (modaled-define-substate "org")
-(hx-define-substate-keys "org"
-  (" o" "org open" nil (call-interactively #'org-open-at-point)))
+(modaled-define-keys
+  :substates '("org")
+  :bind
+  '((" o" . org-open-at-point)))
 ; enable org substate when in normal state
 (add-variable-watcher
  'modaled-state
