@@ -46,6 +46,7 @@ Besides, the keymap is suppressed by default, which means using undefined keys w
 unless `:no-suppress` is set to true.
 
 You can set up the keymap by `modaled-define-keys` (or directly using `define-key`) and enable the minor mode whenever you want.
+(Note: `modaled-define-state-keys`, `modaled-define-substate-keys` and `modaled-define-global-keys` are now deprecated)
 
 ```emacs-lisp
 (modaled-define-state "normal"
@@ -64,7 +65,7 @@ You can set up the keymap by `modaled-define-keys` (or directly using `define-ke
     ("k" . previous-line)
     ("j" . next-line)
     ;; you can also bind multiple keys to a command
-    ("a" "b") . ,(lambda () (interative) (message "hello"))))
+    (("a" "b") . ,(lambda () (interative) (message "hello")))))
 
 (modaled-define-state "insert"
   :sparse t
