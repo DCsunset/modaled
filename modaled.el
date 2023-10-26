@@ -83,14 +83,6 @@ Optional INITVALUE and DOCSTRING can be provided."
   "Get the symbol of SUBSTATE keymap."
   (intern (format "modaled-%s-substate-keymap" substate)))
 
-(defun modaled--define-keymap (keymaps keybindings)
-  "Define KEYBINDINGS for all the KEYMAPS."
-  (dolist (keymap keymaps)
-    (pcase-dolist (`(,key . ,def) keybindings)
-      (let ((keys (if (listp key) key (list key))))
-        (dolist (k keys)
-          (define-key (symbol-value keymap) k def))))))
-
 ;;;###autoload
 (defun modaled-set-state (state)
   "Set current modaled STATE."
@@ -108,9 +100,18 @@ Optional INITVALUE and DOCSTRING can be provided."
   (interactive)
   (modaled-set-state modaled-default-state))
 
+(defun modaled--define-keymap (keymaps keybindings)
+  "Define KEYBINDINGS for all the KEYMAPS."
+  (dolist (keymap keymaps)
+    (pcase-dolist (`(,key . ,def) keybindings)
+      (let ((keys (if (listp key) key (list key))))
+        (dolist (k keys)
+          (define-key (symbol-value keymap) k def))))))
+
 ;;;###autoload
 (defun modaled-define-state-keys (state &rest keybindings)
   "Define KEYBINDINGS for the STATE.
+Deprecated.  Use `modaled-define-keys' instead.
 
 STATE can be a single state or a list of states.
 If it's a list, KEYBINDINGS will be applied to all states in list."
@@ -121,6 +122,7 @@ If it's a list, KEYBINDINGS will be applied to all states in list."
 ;;;###autoload
 (defun modaled-define-substate-keys (substate &rest keybindings)
   "Define KEYBINDINGS for the SUBSTATE.
+Deprecated.  Use `modaled-define-keys' instead.
 
 SUBSTATE can be a single substate or a list of substates.
 If it's a list, KEYBINDINGS will be applied to all substates in list."
@@ -130,12 +132,38 @@ If it's a list, KEYBINDINGS will be applied to all substates in list."
 
 ;;;###autoload
 (defun modaled-define-global-keys (&rest keybindings)
-  "Define KEYBINDINGS globally."
+  "Define KEYBINDINGS globally.
+Deprecated.  Use `modaled-define-keys' instead."
   (declare (indent 0))
   (pcase-dolist (`(,key . ,def) keybindings)
     (let ((keys (if (listp key) key (list key))))
       (dolist (k keys)
         (global-set-key k def)))))
+
+;;;###autoload
+(defun modaled-define-keys (&rest body)
+  "Define keybindings for the states, substates, or globally.
+
+The following options can be set in BODY:
+:states       A list of states to apply keybindings to
+:substates    A list of substates to apply keybindings to
+:global       Apply keybindings globally
+:bind         A list of keybindings in the format of (key . command)
+              where key can be a string or list."
+  (declare (indent defun))
+  (let* ((states (plist-get body :states))
+         (substates (plist-get body :substates))
+         (keymaps (append (mapcar #'modaled-get-state-keymap states)
+                          (mapcar #'modaled-get-substate-keymap substates)))
+         (global (plist-get body :global))
+         (bind (plist-get body :bind)))
+    (pcase-dolist (`(,key . ,def) bind)
+      (let ((keys (if (listp key) key (list key))))
+        (dolist (k keys)
+          (dolist (keymap keymaps)
+            (define-key (symbol-value keymap) k def))
+          (when global
+            (global-set-key k def)))))))
 
 ;;;###autoload
 (defmacro modaled--define-minor-mode (mode keymap body)
