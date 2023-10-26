@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.0](https://github.com/DCsunset/modaled/compare/v0.7.0...v0.8.0) (2023-10-26)
+
+
+### Features
+
+* add modaled-define-keys for more generic key binding ([269e285](https://github.com/DCsunset/modaled/commit/269e28526937c8abf113047891233c6ff0da9dee))
+
+
+### Misc
+
+* fix doc for defining keys ([8579390](https://github.com/DCsunset/modaled/commit/85793900936864598481f3cab9356f9165683c3d))
+
 ## [0.7.0](https://github.com/DCsunset/modaled/compare/v0.6.0...v0.7.0) (2023-10-14)
 
 
