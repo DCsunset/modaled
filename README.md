@@ -122,7 +122,7 @@ The function parameters are the same as those for states.
 The corresponding minor mode and keymap are `modaled-SUBSTATE-substate-mode` and `modaled-SUBSTATE-substate-keymap`.
 
 Substates are more flexible than states as you manage them directly.
-One use case is to enable some keybindings only in a specific major mode.
+There's also a helper function `modaled-enable-substate-on-state-change` to enable a substate when the state changes.
 The example below shows how to define a substate only for org-mode and normal state:
 
 ```emacs-lisp
@@ -132,14 +132,10 @@ The example below shows how to define a substate only for org-mode and normal st
   :bind
   '((" o" . org-open-at-point)))
 ; enable org substate when in normal state
-(add-variable-watcher
- 'modaled-state
- (lambda (sym newval op where)
-   ; suppress the warning of unused vars
-   (ignore sym op where)
-   (when (eq major-mode 'org-mode)
-     (let ((arg (if (equal newval "normal") 1 -1)))
-       (modaled-org-substate-mode arg)))))
+(modaled-enable-substate-on-state-change
+  "org"
+  :states '("normal")
+  :major '(org-mode))
 ```
 
 
