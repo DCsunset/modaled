@@ -288,6 +288,32 @@ See `modaled--initialize' for the argument format."
   ;; enable it for all existing buffers
   (modaled--initialize-all-buffers body))
 
+;;;###autoload
+(defun modaled-enable-substate-on-state-change (substate &rest body)
+  "Enable SUBSTATE under conditions specified in BODY on modaled state change.
+
+The following options are accepted in BODY:
+:states  Enable only when changed to specified states.
+:major   Enable only in specified major modes.
+:minor   Enable only in specified minor modes.
+:pred    Using custom predicate fn (return true to enable it)
+
+For each option, nil means always enabled."
+  (declare (indent defun))
+  (let ((states (plist-get body :states))
+        (major (plist-get body :major))
+        (minor (plist-get body :minor))
+        (pred (plist-get body :pred)))
+    (add-variable-watcher
+     'modaled-state
+     (lambda (_ new-val _ _)
+       (when (and (or (not major) (memq major-mode major))
+                  ;; check if any minor-mode is enabled
+                  (or (not minor) (memq t (mapcar #'symbol-value minor)))
+                  (or (not pred) (funcall pred)))
+         (let ((arg (if (or (not states) (member new-val states)) 1 -1)))
+           (funcall (modaled-get-substate-mode substate) arg)))))))
+
 (provide 'modaled)
 
 ;;; modaled.el ends here
