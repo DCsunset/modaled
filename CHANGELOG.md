@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.1](https://github.com/DCsunset/modaled/compare/v0.8.0...v0.8.1) (2023-10-28)
+
+
+### Features
+
+* allow enabling substate on state change ([244b3ef](https://github.com/DCsunset/modaled/commit/244b3ef980740f8da18f8c5f2394c8ffb67a056e))
+
+
+### Misc
+
+* add deprecation warning and fix a typo ([33d23db](https://github.com/DCsunset/modaled/commit/33d23db62fd835969edfaafe0aa94e4f38f99ee6))
+* add example for modaled-enable-substate-on-state-change ([c3244a9](https://github.com/DCsunset/modaled/commit/c3244a927bb1ed864814318dfb45ad5c016738fc))
+* fix an example of key definition ([bb0a63b](https://github.com/DCsunset/modaled/commit/bb0a63b04be499610680b50ea3acec5f3b47dbd1))
+
 ## [0.8.0](https://github.com/DCsunset/modaled/compare/v0.7.0...v0.8.0) (2023-10-26)
 
 
