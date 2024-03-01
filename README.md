@@ -31,7 +31,7 @@ Then add the following to the config file:
 
 If you are using Nix flake,
 you can directly install the latest version (main branch) to your inputs and use it in emacsPackages:
-```emacs-lisp
+```nix
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
