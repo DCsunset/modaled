@@ -30,7 +30,41 @@ Then add the following to the config file:
 ```
 
 If you are using Nix flake,
-you can directly add this package to your inputs and use it in emacsPackages.
+you can directly install the latest version (main branch) to your inputs and use it in emacsPackages:
+```emacs-lisp
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    modaled = {
+      url = "github:DCsunset/modaled";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs = inputs@{ self, nixpkgs, ... }:
+    let
+      system = "x86_64-linux";
+    in {
+      nixosConfigurations."<hostname>" = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          ({ config, pkgs, ... }: {
+            home-manager.users."<user>" = {
+              programs.emacs = {
+                enable = true;
+                extraPackages = epkgs: [
+                  inputs.modaled.packages.${system}.default
+                ];
+              };
+            };
+          })
+          ./configuration.nix
+        ];
+      };
+    };
+}
+```
+
 
 ## Usage
 
