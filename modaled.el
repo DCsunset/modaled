@@ -107,12 +107,11 @@ Used when the major mode is enabled and by `modaled-set-default-state'.")
 ;;;###autoload
 (defun modaled-get-main-state ()
   "Get main state for current major mode."
-  (interactive)
   (alist-get major-mode
              modaled-main-state-alist
              modaled-default-state
              nil
-             (lambda (mode modes)
+             (lambda (modes mode)
                (cond
                 ((listp modes) (memq mode modes))
                 ((eq modes t) t)
