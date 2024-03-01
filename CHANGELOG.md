@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.2](https://github.com/DCsunset/modaled/compare/v0.8.1...v0.8.2) (2024-03-01)
+
+
+### Features
+
+* add main state and its helper functions ([9ff4b59](https://github.com/DCsunset/modaled/commit/9ff4b59b60bcbad79d67acf15b9871b6b971df0b))
+
+
+### Bug Fixes
+
+* fix bugs in modaled-get-main-state ([19dc77a](https://github.com/DCsunset/modaled/commit/19dc77a95ff934813cead3c7379ffde82524caaa))
+
+
+### Misc
+
+* add detailed instruction for Nix flake installation ([7eb128b](https://github.com/DCsunset/modaled/commit/7eb128b44da59a5a303a00b360f66f7f8c40c3ce))
+* fix language for code block ([fdc8506](https://github.com/DCsunset/modaled/commit/fdc850692e475a0424f6678d2691f4df8fd709b9))
+
 ## [0.8.1](https://github.com/DCsunset/modaled/compare/v0.8.0...v0.8.1) (2023-10-28)
 
 
