@@ -54,9 +54,19 @@ Optional INITVALUE and DOCSTRING can be provided."
   nil
   "An alist of modaled mode map to add to `emulation-mode-map-alists'.")
 
+(defvar modaled-main-state-alist
+  '()
+  "Main modaled state for major modes.
+Used by `modaled-set-main-state'.
+
+It is an alist where the key is t, a major mode, or a list of major modes
+and the value is the main state for them.
+If it's not set for some major modes, their default state will be used instead.")
+
 (modaled-define-local-var modaled-default-state
   nil
-  "Default modaled state.")
+  "Default modaled state.
+Used when the major mode is enabled and by `modaled-set-default-state'.")
 
 ; make modaled-state buffer local as buffers have different current states
 (modaled-define-local-var modaled-state
@@ -93,6 +103,26 @@ Optional INITVALUE and DOCSTRING can be provided."
   (when state
     (funcall (modaled-get-state-mode state) 1))
   (setq modaled-state state))
+
+;;;###autoload
+(defun modaled-get-main-state ()
+  "Get main state for current major mode."
+  (interactive)
+  (alist-get major-mode
+             modaled-main-state-alist
+             modaled-default-state
+             nil
+             (lambda (mode modes)
+               (cond
+                ((listp modes) (memq mode modes))
+                ((eq modes t) t)
+                (t (eq mode modes))))))
+
+;;;###autoload
+(defun modaled-set-main-state ()
+  "Set current state to main state."
+  (interactive)
+  (modaled-set-state (modaled-get-main-state)))
 
 ;;;###autoload
 (defun modaled-set-default-state ()

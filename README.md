@@ -80,21 +80,9 @@ You can set up the keymap by `modaled-define-keys` (or directly using `define-ke
   '(([escape] . modaled-set-default-state)))
 ```
 
-To change the current state, you can use `modaled-set-state` or `modaled-set-default-state`:
-
-```emacs-lisp
-; Disable all states
-(modaled-set-state nil)
-; Enable/change to a defined state
-(modaled-set-state "normal")
-; Reset to default state
-(modaled-set-default-state)
-```
-
 To enable Modaled globally, you will need to define a default state by `modaled-define-default-state STATE`.
 This will create hooks to enable the default state on buffer creation and major mode change.
 You can set one global default state or different default states for different major modes:
-
 ```emacs-lisp
 ; set normal as default state
 (modaled-define-default-state "normal")
@@ -106,11 +94,38 @@ You can set one global default state or different default states for different m
   '("normal"))
 ```
 
+You can optionally set a main state for each major mode.
+It is different from the default state as it's not auto enabled on major mode change,
+but it will be useful if you want the initial state to be different from the main state you normally use:
+```emacs-lisp
+;; Set an association list to define main state.
+;; The key is t, a major mode, or a list of major modes and the value is the state
+;; If not defined for some major modes, default state will be used
+(setq modaled-main-state-alist
+      '(((dired-mode wdired-mode) . "custom")
+        (vterm-mode . "insert")))
+```
+
+To change the current state, you can use `modaled-set-state`, `modaled-set-default-state` or `modaled-set-main-state`:
+```emacs-lisp
+;; Disable all states
+(modaled-set-state nil)
+;; Enable/change to a defined state
+(modaled-set-state "normal")
+;; Reset to default state
+(modaled-set-default-state)
+;; Set to main state
+(modaled-set-main-state)
+```
+
+
 To see supported arguments for each function, use `describe-function` (usually bound to `C-h f`) to see the docs.
+
 
 ### Substates
 
 Modaled also supports defining substates.
+
 In Modaled, states are managed like a major mode (which means only one state should be enabled),
 while substates are unmanaged like a minor mode (multiple substates can be active at the same time).
 The current state is stored in variable `modaled-state`.
