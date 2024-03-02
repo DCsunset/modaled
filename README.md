@@ -29,6 +29,8 @@ Then add the following to the config file:
 (require 'modaled)
 ```
 
+If you are using Nix, this package is also available in [NUR](https://nur.nix-community.org/repos/dcsunset/).
+
 If you are using Nix flake,
 you can directly install the latest version (main branch) to your inputs and use it in emacsPackages:
 ```nix
