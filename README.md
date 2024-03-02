@@ -194,7 +194,7 @@ The example below shows how to define a substate only for org-mode and normal st
 
 AGPL-3.0.
 
-    Copyright (C) 2023  DCsunset
+    Copyright (C) 2023-2024  DCsunset
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
