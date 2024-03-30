@@ -82,7 +82,7 @@ If it's not set for some major modes, their default state will be used instead."
 (defvar modaled-main-state-fn
   nil
   "A function to get main modaled state, used by `modaled-set-main-state'.")
-(make-obsolete-variable modaled-main-state-alist modaled-main-state-fn "0.8.3")
+(make-obsolete-variable 'modaled-main-state-alist 'modaled-main-state-fn "0.8.3")
 
 ;;;###autoload
 (defun modaled-get-main-state ()
@@ -120,7 +120,7 @@ If it's not set for some major modes, their default state will be used instead."
   nil
   "Default modaled state.
 Used when the major mode is enabled and by `modaled-set-default-state'.")
-(make-obsolete-variable modaled-default-state modaled-init-state-fn "0.8.3")
+(make-obsolete-variable 'modaled-default-state 'modaled-init-state-fn "0.8.3")
 
 ;;;###autoload
 (defun modaled-set-default-state ()
