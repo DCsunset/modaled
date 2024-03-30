@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.3](https://github.com/DCsunset/modaled/compare/v0.8.2...v0.8.3) (2024-03-30)
+
+
+### Features
+
+* use fn for main and init state and obsolete old definitions ([948bc4c](https://github.com/DCsunset/modaled/commit/948bc4cbc35c4b8bb4e20b3a6ba37e548e92d565))
+
+
+### Bug Fixes
+
+* fix get-main-state function ([db8f186](https://github.com/DCsunset/modaled/commit/db8f186bf446e82ea932a06e679b3f7b08eaf6cb))
+* fix initialization ([8ea8656](https://github.com/DCsunset/modaled/commit/8ea86560e89fbf49e9a38e6a23b3472c07596cb5))
+* fix obsolete symbol ([aef559f](https://github.com/DCsunset/modaled/commit/aef559f13f050eda2f2a2c34250b45ca4a1bc8ec))
+* fix set-init-state ([7b3a55d](https://github.com/DCsunset/modaled/commit/7b3a55d17495d1e7c7749c61698d85a6648ffae3))
+* suppress warnings in the library itself ([5d67d0f](https://github.com/DCsunset/modaled/commit/5d67d0f81aa4ea693c7a4a3f2b874100b197d03f))
+
+
+### Misc
+
+* add NUR to installation instruction ([f21415c](https://github.com/DCsunset/modaled/commit/f21415cc9a3d88a001a52185f6f379bc00829d1e))
+* update copyright year ([0d8f894](https://github.com/DCsunset/modaled/commit/0d8f8941f3e31a19641db4b21dd7d963c514ec92))
+* update readme ([0b97fea](https://github.com/DCsunset/modaled/commit/0b97fea2c2c54e80fc058aea033ff8561f30d6a3))
+
 ## [0.8.2](https://github.com/DCsunset/modaled/compare/v0.8.1...v0.8.2) (2024-03-01)
 
 
