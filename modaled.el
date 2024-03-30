@@ -313,7 +313,12 @@ See all available options in `modaled--define-minor-mode'."
           ;; TODO: remove the condition
           (if modaled-init-state-fn
               (modaled-set-init-state)
-            (modaled-set-default-state)))))))
+            (modaled-set-default-state))))
+      (unless (minibufferp)
+        ;; enable init state
+        ;; TODO: remove the condition
+        (if modaled-init-state-fn
+            (modaled-set-init-state))))))
 
 (defun modaled--initialize-all-buffers (body)
   "Initialize all existing buffers with BODY."
