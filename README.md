@@ -116,30 +116,32 @@ You can set up the keymap by `modaled-define-keys` (or directly using `define-ke
   '(([escape] . modaled-set-default-state)))
 ```
 
-To enable Modaled globally, you will need to define a default state by `modaled-define-default-state STATE`.
-This will create hooks to enable the default state on buffer creation and major mode change.
-You can set one global default state or different default states for different major modes:
+To enable Modaled globally, you will need set init state and call `modaled-setup` function.
+This will create hooks to enable the init state on buffer creation and major mode change.
+You can set one global init using a custom function:
 ```emacs-lisp
-; set normal as default state
-(modaled-define-default-state "normal")
+;; set init state using a function
+(setq modaled-init-state-fn
+      (lambda ()
+        (if (eq major-mode 'vterm-mode)
+            "insert")
+          "normal"))
+;; enable globally based on init state
+(modaled-setup)
 
-; set insert as default state for (w)dired-mode
-; normal for others
-(modaled-define-default-state
-  '("insert" dired-mode wdired-mode)
-  '("normal"))
+;; manually switch to it
+(modaled-set-init-state)
 ```
 
-You can optionally set a main state for each major mode.
-It is different from the default state as it's not auto enabled on major mode change,
-but it will be useful if you want the initial state to be different from the main state you normally use:
+You can optionally set a function for main state.
+It is different from the init state as it's not auto enabled on major mode change.
+Instead, it is just a helper to easily switch to it:
 ```emacs-lisp
-;; Set an association list to define main state.
-;; The key is t, a major mode, or a list of major modes and the value is the state
-;; If not defined for some major modes, default state will be used
-(setq modaled-main-state-alist
-      '(((dired-mode wdired-mode) . "custom")
-        (vterm-mode . "insert")))
+(setq modaled-main-state-fn
+      (lambda ()
+        "normal"))
+;; manually switch to it
+(modaled-set-main-state)
 ```
 
 To change the current state, you can use `modaled-set-state`, `modaled-set-default-state` or `modaled-set-main-state`:
@@ -148,8 +150,8 @@ To change the current state, you can use `modaled-set-state`, `modaled-set-defau
 (modaled-set-state nil)
 ;; Enable/change to a defined state
 (modaled-set-state "normal")
-;; Reset to default state
-(modaled-set-default-state)
+;; Reset to init state
+(modaled-set-init-state)
 ;; Set to main state
 (modaled-set-main-state)
 ```
