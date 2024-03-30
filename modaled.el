@@ -50,6 +50,22 @@ Optional INITVALUE and DOCSTRING can be provided."
      ; prevent it from being cleared by changing major mode
      (put ',symbol 'permanent-local t)))
 
+; make modaled-state buffer local as buffers have different current states
+(modaled-define-local-var modaled-state
+  nil
+  "Current modaled state.")
+
+;;;###autoload
+(defun modaled-set-state (state)
+  "Set current modaled STATE."
+  ; prevent disabling and enabling the same state
+  (when (and modaled-state (not (equal modaled-state state)))
+    ; disable current mode
+    (funcall (modaled-get-state-mode modaled-state) -1))
+  (when state
+    (funcall (modaled-get-state-mode state) 1))
+  (setq modaled-state state))
+
 (defvar modaled--emulation-mode-map-alist
   nil
   "An alist of modaled mode map to add to `emulation-mode-map-alists'.")
@@ -63,15 +79,56 @@ It is an alist where the key is t, a major mode, or a list of major modes
 and the value is the main state for them.
 If it's not set for some major modes, their default state will be used instead.")
 
+(defvar modaled-main-state-fn
+  nil
+  "A function to get main modaled state, used by `modaled-set-main-state'.")
+(make-obsolete-variable modaled-main-state-alist modaled-main-state-fn "0.8.3")
+
+;;;###autoload
+(defun modaled-get-main-state ()
+  "Get main state for current major mode."
+  (alist-get major-mode
+             modaled-main-state-alist
+             modaled-default-state
+             nil
+             (lambda (modes mode)
+               (cond
+                ((listp modes) (memq mode modes))
+                ((eq modes t) t)
+                (t (eq mode modes))))))
+(make-obsolete #'modaled-get-main-state nil "0.8.3")
+
+;;;###autoload
+(defun modaled-set-main-state ()
+  "Set current state to main state."
+  (interactive)
+  ;; TODO: remove get-main-state in next version
+  (modaled-set-state (if modaled-main-state-fn
+                         (funcall modaled-main-state-fn)
+                       (modaled-get-main-state))))
+
+(defvar modaled-init-state-fn
+  "A function to get default modaled state, used by `modaled-set-init-state'.")
+
+;;;###autoload
+(defun modaled-set-init-state ()
+  "Set current state to init state."
+  (interactive)
+  (modaled-set-state (funcall modaled-init-state-fn)))
+
 (modaled-define-local-var modaled-default-state
   nil
   "Default modaled state.
 Used when the major mode is enabled and by `modaled-set-default-state'.")
+(make-obsolete-variable modaled-default-state modaled-init-state-fn "0.8.3")
 
-; make modaled-state buffer local as buffers have different current states
-(modaled-define-local-var modaled-state
-  nil
-  "Current modaled state.")
+;;;###autoload
+(defun modaled-set-default-state ()
+  "Set current state to default state."
+  (interactive)
+  (modaled-set-state modaled-default-state))
+(make-obsolete #'modaled-set-default-state #'modaled-set-init-state "0.8.3")
+
 
 ;;;###autoload
 (defun modaled-get-state-mode (state)
@@ -92,42 +149,6 @@ Used when the major mode is enabled and by `modaled-set-default-state'.")
 (defun modaled-get-substate-keymap (substate)
   "Get the symbol of SUBSTATE keymap."
   (intern (format "modaled-%s-substate-keymap" substate)))
-
-;;;###autoload
-(defun modaled-set-state (state)
-  "Set current modaled STATE."
-  ; prevent disabling and enabling the same state
-  (when (and modaled-state (not (equal modaled-state state)))
-    ; disable current mode
-    (funcall (modaled-get-state-mode modaled-state) -1))
-  (when state
-    (funcall (modaled-get-state-mode state) 1))
-  (setq modaled-state state))
-
-;;;###autoload
-(defun modaled-get-main-state ()
-  "Get main state for current major mode."
-  (alist-get major-mode
-             modaled-main-state-alist
-             modaled-default-state
-             nil
-             (lambda (modes mode)
-               (cond
-                ((listp modes) (memq mode modes))
-                ((eq modes t) t)
-                (t (eq mode modes))))))
-
-;;;###autoload
-(defun modaled-set-main-state ()
-  "Set current state to main state."
-  (interactive)
-  (modaled-set-state (modaled-get-main-state)))
-
-;;;###autoload
-(defun modaled-set-default-state ()
-  "Set current state to default state."
-  (interactive)
-  (modaled-set-state modaled-default-state))
 
 (defun modaled--define-keymap (keymaps keybindings)
   "Define KEYBINDINGS for all the KEYMAPS."
@@ -234,8 +255,7 @@ The following options are supported for the minor mode:
   "Define a new STATE minor mode with options in BODY.
 
 STATE minor modes are managed and only one should be active.
-You should change the state by `modaled-set-state' or
-`modaled-set-default-state'.
+You should change the state by `modaled-set-state' or similar functions.
 
 This function will generate the definitions for the following items:
 1. modaled-STATE-state-mode: Minor mode for the state.
@@ -270,13 +290,7 @@ See all available options in `modaled--define-minor-mode'."
   "Non-nil if this buffer is initalized by modaled")
 
 (defun modaled--initialize (body)
-  "Initalize modaled with specs in BODY.
-
-THe BODY can be a list containing the name of a state,
-or a list of cons in format (state . modeList).
-The default state is enabled only when
-the current major mode is in the modeList or the modeList is nil.
-It stops iterating through the list once a match is found."
+  "Initialize buffer with init modaled state."
   (when (not modaled--initialized)
     (setq modaled--initialized t)
     (let ((state
@@ -288,16 +302,38 @@ It stops iterating through the list once a match is found."
                          (memq major-mode modes))
                  (cl-return (car def)))))))
       (when state
+        ;; TODO: remove default state
         (setq modaled-default-state state)
+        ;; TODO: support custom predicate in buffer
         (unless (minibufferp)
-          ;; enable default modaled minor modes
-          (modaled-set-default-state))))))
+          ;; enable init state
+          ;; TODO: remove the condition
+          (if modaled-init-state-fn
+              (modaled-set-init-state)
+            (modaled-set-default-state)))))))
 
 (defun modaled--initialize-all-buffers (body)
   "Initialize all existing buffers with BODY."
 	(dolist (buf (buffer-list))
 	  (with-current-buffer buf
       (modaled--initialize body))))
+
+;;;###autoload
+(defun modaled-setup (&rest arg)
+  "Set up modaled for existing and future buffer.
+See `modaled--initialize' for ARG format."
+  (declare (indent defun))
+  ;; update after major mode changes
+  (add-hook 'after-change-major-mode-hook
+            (lambda ()
+              ; re-init
+              (setq modaled--initialized nil)
+              (modaled--initialize arg)))
+  ;; update on creation (no major mode change yet)
+  (add-hook 'buffer-list-update-hook
+            (lambda () (modaled--initialize-all-buffers arg)))
+  ;; enable it for all existing buffers
+  (modaled--initialize-all-buffers arg))
 
 ;;;###autoload
 (defun modaled-define-default-state (&rest body)
@@ -316,6 +352,7 @@ See `modaled--initialize' for the argument format."
             (lambda () (modaled--initialize-all-buffers body)))
   ;; enable it for all existing buffers
   (modaled--initialize-all-buffers body))
+(make-obsolete #'modaled-define-default-state #'modaled-setup "0.8.3")
 
 ;;;###autoload
 (defun modaled-enable-substate-on-state-change (substate &rest body)
