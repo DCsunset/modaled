@@ -85,20 +85,6 @@ If it's not set for some major modes, their default state will be used instead."
 (make-obsolete-variable 'modaled-main-state-alist 'modaled-main-state-fn "0.8.3")
 
 ;;;###autoload
-(defun modaled-get-main-state ()
-  "Get main state for current major mode."
-  (alist-get major-mode
-             modaled-main-state-alist
-             modaled-default-state
-             nil
-             (lambda (modes mode)
-               (cond
-                ((listp modes) (memq mode modes))
-                ((eq modes t) t)
-                (t (eq mode modes))))))
-(make-obsolete #'modaled-get-main-state nil "0.8.3")
-
-;;;###autoload
 (defun modaled-set-main-state ()
   "Set current state to main state."
   (interactive)
@@ -129,6 +115,19 @@ Used when the major mode is enabled and by `modaled-set-default-state'.")
   (modaled-set-state modaled-default-state))
 (make-obsolete #'modaled-set-default-state #'modaled-set-init-state "0.8.3")
 
+;;;###autoload
+(defun modaled-get-main-state ()
+  "Get main state for current major mode."
+  (alist-get major-mode
+             modaled-main-state-alist
+             modaled-default-state
+             nil
+             (lambda (modes mode)
+               (cond
+                ((listp modes) (memq mode modes))
+                ((eq modes t) t)
+                (t (eq mode modes))))))
+(make-obsolete #'modaled-get-main-state nil "0.8.3")
 
 ;;;###autoload
 (defun modaled-get-state-mode (state)
