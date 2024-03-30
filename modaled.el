@@ -81,7 +81,8 @@ If it's not set for some major modes, their default state will be used instead."
 
 (defvar modaled-main-state-fn
   nil
-  "A function to get main modaled state, used by `modaled-set-main-state'.")
+  "A function to return main modaled state for buffer.
+Should return the state as string.")
 (make-obsolete-variable 'modaled-main-state-alist 'modaled-main-state-fn "0.8.3")
 
 ;;;###autoload
@@ -94,13 +95,16 @@ If it's not set for some major modes, their default state will be used instead."
                        (modaled-get-main-state))))
 
 (defvar modaled-init-state-fn
-  "A function to get default modaled state, used by `modaled-set-init-state'.")
+  nil
+  "A function to return init modaled state for buffer.
+Should return the state as string.")
 
 ;;;###autoload
 (defun modaled-set-init-state ()
   "Set current state to init state."
   (interactive)
-  (modaled-set-state (funcall modaled-init-state-fn)))
+  (modaled-set-state (and modaled-init-state-fn
+                          (funcall modaled-init-state-fn))))
 
 (modaled-define-local-var modaled-default-state
   nil
