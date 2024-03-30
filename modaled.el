@@ -310,9 +310,7 @@ See all available options in `modaled--define-minor-mode'."
         ;; TODO: support custom predicate in buffer
         (unless (minibufferp)
           ;; enable init state
-          ;; TODO: remove the condition
-          (if modaled-init-state-fn
-              (modaled-set-init-state)
+          (with-no-warnings
             (modaled-set-default-state))))
       (unless (minibufferp)
         ;; enable init state
