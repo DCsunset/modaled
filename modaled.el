@@ -200,14 +200,18 @@ Deprecated.  Use `modaled-define-keys' instead."
 The following options can be set in BODY:
 :states       A list of states to apply keybindings to
 :substates    A list of substates to apply keybindings to
-:global       Apply keybindings globally
+:global       Apply keybindings globally (boolean)
+:keymaps      Keymaps to bind keys to
 :bind         A list of keybindings in the format of (key . command)
               where key can be a string or list."
   (declare (indent defun))
   (let* ((states (plist-get body :states))
          (substates (plist-get body :substates))
          (keymaps (append (mapcar #'modaled-get-state-keymap states)
-                          (mapcar #'modaled-get-substate-keymap substates)))
+                          (mapcar #'modaled-get-substate-keymap substates)
+                          (plist-get body :keymaps)
+                          (and (plist-get body :global)
+                               (list (current-global-map)))))
          (global (plist-get body :global))
          (bind (plist-get body :bind)))
     (pcase-dolist (`(,key . ,def) bind)
