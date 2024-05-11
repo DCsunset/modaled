@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.8.4](https://github.com/DCsunset/modaled/compare/v0.8.3...v0.8.4) (2024-05-11)
+
+
+### Features
+
+* support binding keys to keymaps in modaled-define-keys ([da1dcb6](https://github.com/DCsunset/modaled/commit/da1dcb6c0ee821619b4c61c9ff7c242a78cb90f6))
+
+
+### Bug Fixes
+
+* fix keymap options ([c19887b](https://github.com/DCsunset/modaled/commit/c19887b0abbab0180f941d4bcb5246a867e0fecb))
+
+
+### Misc
+
+* fix docs ([0778bc3](https://github.com/DCsunset/modaled/commit/0778bc3c560964f00edbfc4f53c1c84245289a7a))
+
 ## [0.8.3](https://github.com/DCsunset/modaled/compare/v0.8.2...v0.8.3) (2024-03-30)
 
 
