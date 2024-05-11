@@ -101,7 +101,7 @@ You can set up the keymap by `modaled-define-keys` (or directly using `define-ke
     ("k" . previous-line)
     ("j" . next-line)
     ;; you can also bind multiple keys to a command
-    (("a" "b") . ,(lambda () (interative) (message "hello")))))
+    (("a" "b") . ,(lambda () (interactive) (message "hello")))))
 
 (modaled-define-state "insert"
   :sparse t

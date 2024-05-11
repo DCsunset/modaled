@@ -20,7 +20,6 @@
             buildInputs = [
               (pkgs.emacsWithPackages (epkgs: []))
             ];
-            # TODO: enable warning in next version
             buildPhase = ''
               emacs -L . --batch -f batch-byte-compile *.el 2> stderr.txt
               cat stderr.txt
