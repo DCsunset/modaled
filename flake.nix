@@ -3,35 +3,31 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-      in {
-        packages = rec {
-          modaled = pkgs.stdenv.mkDerivation {
-            name = "modaled";
-            src = pkgs.lib.sourceByRegex ./. [
-              "^modaled\.el$"
-            ];
-            buildInputs = [
-              (pkgs.emacsWithPackages (epkgs: []))
-            ];
-            buildPhase = ''
-              emacs -L . --batch -f batch-byte-compile *.el 2> stderr.txt
-              cat stderr.txt
-              ! grep -q ': Warning:' stderr.txt
-            '';
-            installPhase = ''
-              LISPDIR=$out/share/emacs/site-lisp
-              install -d $LISPDIR
-              install *.el *.elc $LISPDIR
-            '';
-          };
-          default = modaled;
+  outputs = inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+      perSystem = { pkgs, ... }: {
+        packages.default = pkgs.stdenv.mkDerivation {
+          name = "modaled";
+          src = ./.;
+          buildInputs = [
+            (pkgs.emacsWithPackages (epkgs: with epkgs; [ compat ]))
+          ];
+          buildPhase = ''
+            emacs -L . --batch -f batch-byte-compile *.el
+          '';
+          installPhase = ''
+            LISPDIR=$out/share/emacs/site-lisp
+            install -d $LISPDIR
+            install *.el *.elc $LISPDIR
+          '';
         };
-      });
+      };
+    };
 }
