@@ -113,7 +113,7 @@ You can set up the keymap by `modaled-define-keys` (or directly using `define-ke
   :states '("insert" "normal")
   ; bind a key to change back to default state from other states
   :bind
-  '(([escape] . modaled-set-default-state)))
+  '(("<escape>" . modaled-set-default-state)))
 ```
 
 To enable Modaled globally, you will need set init state and call `modaled-setup` function.
@@ -137,9 +137,7 @@ You can optionally set a function for main state.
 It is different from the init state as it's not auto enabled on major mode change.
 Instead, it is just a helper to easily switch to it:
 ```emacs-lisp
-(setq modaled-main-state-fn
-      (lambda ()
-        "normal"))
+(setq modaled-main-state-fn (lambda () "normal"))
 ;; manually switch to it
 (modaled-set-main-state)
 ```
@@ -183,13 +181,26 @@ The example below shows how to define a substate only for org-mode and normal st
 (modaled-define-keys
   :substates '("org")
   :bind
-  '((" o" . org-open-at-point)))
+  '(("SPC o" . org-open-at-point)))
 ; enable org substate when in normal state
 (modaled-enable-substate-on-state-change
   "org"
   :states '("normal")
   :major '(org-mode))
 ```
+
+
+## Migration
+
+### Migration from v0.8 to v0.9
+
+Starting from v0.9, modaled uses `keymap-set` instead of `define-key` when binding keys.
+It means that the keys used in `:bind` must satisfy `key-valid-p` and `kbd` should no longer be used.
+
+For example, the following keys should be changed:
+- `[escape]` -> `"<escape>"`
+- `(kbd "M-<return>")` -> `"M-<return>"`
+- `"a b"` -> `"a SPC b"`
 
 
 ## License
