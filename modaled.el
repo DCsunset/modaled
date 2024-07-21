@@ -170,6 +170,9 @@ The following options can be set in BODY:
 :substates    A list of substates to apply keybindings to
 :global       Apply keybindings globally (boolean)
 :keymaps      Keymaps (symbols) to bind keys to
+:inherit      Inherit keys from keymaps.
+              Arg is a list of cons (keymap . keys)
+              where keys is nil (all keys) or a list of key strings.
 :bind         A list of keybindings in the format of (key . command)
               where key can be a string or list."
   (declare (indent defun))
@@ -179,7 +182,15 @@ The following options can be set in BODY:
                           (mapcar #'modaled-get-substate-keymap substates)
                           (plist-get body :keymaps)))
          (global (plist-get body :global))
+         (inherit (plist-get body :inherit))
          (bind (plist-get body :bind)))
+    (pcase-dolist (`(,inherit-keymap . ,inherit-keys) inherit)
+      (dolist (k inherit-keys)
+        (let ((binding (keymap-lookup (symbol-value inherit-keymap) k)))
+          (dolist (keymap keymaps)
+            (keymap-set (symbol-value keymap) k binding))
+          (when global
+            (keymap-global-set k binding)))))
     (pcase-dolist (`(,key . ,def) bind)
       (let ((keys (if (listp key) key (list key))))
         (dolist (k keys)
