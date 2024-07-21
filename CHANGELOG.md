@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.0](https://github.com/DCsunset/modaled/compare/v0.8.4...v0.9.0) (2024-07-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove deprecated function and switch to keymap-set
+
+### Features
+
+* add inherit option to inherit keys from other keymaps ([8515bf7](https://github.com/DCsunset/modaled/commit/8515bf73351af7e1cf1b9bf41118802056800181))
+* remove deprecated function and switch to keymap-set ([6c5bea1](https://github.com/DCsunset/modaled/commit/6c5bea13439ed0036526c20e0c105fb13db2dc66))
+
+
+### Misc
+
+* update flake definitions ([3a5fb96](https://github.com/DCsunset/modaled/commit/3a5fb96f56db1f7c079b54b660b66c51aee3bab4))
+* update readme ([52a0654](https://github.com/DCsunset/modaled/commit/52a06542b1fb8e95c0b5b428b0975e3d153b4e25))
+
 ## [0.8.4](https://github.com/DCsunset/modaled/compare/v0.8.3...v0.8.4) (2024-05-11)
 
 
