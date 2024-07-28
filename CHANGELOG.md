@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.1](https://github.com/DCsunset/modaled/compare/v0.9.0...v0.9.1) (2024-07-28)
+
+
+### Features
+
+* expose initialize function and remove obsolete functions ([ca74324](https://github.com/DCsunset/modaled/commit/ca74324ac20578f6418bffeeed484bc5568c1291))
+
+
+### Bug Fixes
+
+* disable substate when condition not met ([b5b250e](https://github.com/DCsunset/modaled/commit/b5b250e6adec4372d7b6f223b9ca0019809e1b79))
+
 ## [0.9.0](https://github.com/DCsunset/modaled/compare/v0.8.4...v0.9.0) (2024-07-21)
 
 
