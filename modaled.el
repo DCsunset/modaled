@@ -360,12 +360,14 @@ For each option, nil means always enabled."
     (add-variable-watcher
      'modaled-state
      (lambda (_ new-val _ _)
-       (when (and (or (not major) (memq major-mode major))
-                  ;; check if any minor-mode is enabled
-                  (or (not minor) (memq t (mapcar #'symbol-value minor)))
-                  (or (not pred) (funcall pred)))
-         (let ((arg (if (or (not states) (member new-val states)) 1 -1)))
-           (funcall (modaled-get-substate-mode substate) arg)))))))
+       (funcall (modaled-get-substate-mode substate)
+                (if (and (or (not major) (memq major-mode major))
+                         ;; check if any minor-mode is enabled
+                         (or (not minor) (memq t (mapcar #'symbol-value minor)))
+                         (or (not pred) (funcall pred))
+                         (or (not states) (member new-val states)))
+                    1
+                  -1))))))
 
 (provide 'modaled)
 
