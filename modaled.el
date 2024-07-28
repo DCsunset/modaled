@@ -38,14 +38,14 @@
   :prefix "modaled-"
   :link '(url-link :tag "GitHub" "https://github.com/DCsunset/modaled"))
 
-(defmacro modaled-define-local-var (symbol &optional initvalue docstring)
+(defmacro modaled-define-local-var (symbol &optional init-value docstring)
   "Define SYMBOL as a permanent buffer-local variable.
 
-Optional INITVALUE and DOCSTRING can be provided."
+Optional INIT-VALUE and DOCSTRING can be provided."
   (declare (indent defun)
            (doc-string 3))
   `(progn
-     (defvar ,symbol ,initvalue ,docstring)
+     (defvar ,symbol ,init-value ,docstring)
      (make-variable-buffer-local ',symbol)
      ; prevent it from being cleared by changing major mode
      (put ',symbol 'permanent-local t)))
@@ -255,7 +255,7 @@ See all available options in `modaled--define-minor-mode'."
 (defmacro modaled-define-substate (substate &rest body)
   "Define a new SUBSTATE minor mode with options in BODY.
 
-SUBSTATE minor modes are unmanaged and multiple substates can be active.
+SUBSTATE minor modes are not managed and multiple substates can be active.
 You can enable/disable it by calling the minor mode function directly.
 
 This function will generate the definitions for the following items:
@@ -271,75 +271,40 @@ See all available options in `modaled--define-minor-mode'."
 (modaled-define-local-var
   modaled--initialized
   nil
-  "Non-nil if this buffer is initalized by modaled")
+  "Non-nil if this buffer is initialized by modaled.")
 
-(defun modaled--initialize (body)
-  "Initialize buffer with init modaled state."
-  (when (not modaled--initialized)
+;;;###autoload
+(defun modaled-initialize (&optional force)
+  "Initialize current buffer with init modaled state.
+when buffer is not init or FORCE is t."
+  (when (or force (not modaled--initialized))
     (setq modaled--initialized t)
-    (let ((state
-           (cl-dolist (def body)
-             (when (stringp def)
-               (cl-return def))
-             (let ((modes (cdr def)))
-               (when (or (not modes)
-                         (memq major-mode modes))
-                 (cl-return (car def)))))))
-      (when state
-        ;; TODO: remove default state
-        (setq modaled-default-state state)
-        ;; TODO: support custom predicate in buffer
-        (unless (minibufferp)
-          ;; enable init state
-          (with-no-warnings
-            (modaled-set-default-state))))
-      (unless (minibufferp)
-        ;; enable init state
-        ;; TODO: remove the condition
-        (if modaled-init-state-fn
-            (modaled-set-init-state))))))
+    (unless (minibufferp)
+      (if modaled-init-state-fn
+          (modaled-set-init-state)))))
 
-(defun modaled--initialize-all-buffers (body)
-  "Initialize all existing buffers with BODY."
+;;;###autoload
+(defun modaled-initialize-all-buffers ()
+  "Initialize all existing buffers."
 	(dolist (buf (buffer-list))
 	  (with-current-buffer buf
-      (modaled--initialize body))))
+      (modaled-initialize))))
 
 ;;;###autoload
-(defun modaled-setup (&rest arg)
-  "Set up modaled for existing and future buffer.
-See `modaled--initialize' for ARG format."
+(defun modaled-setup ()
+  "Set up modaled for existing and future buffer."
   (declare (indent defun))
   ;; update after major mode changes
   (add-hook 'after-change-major-mode-hook
             (lambda ()
               ; re-init
               (setq modaled--initialized nil)
-              (modaled--initialize arg)))
+              (modaled-initialize)))
   ;; update on creation (no major mode change yet)
   (add-hook 'buffer-list-update-hook
-            (lambda () (modaled--initialize-all-buffers arg)))
+            (lambda () (modaled-initialize-all-buffers)))
   ;; enable it for all existing buffers
-  (modaled--initialize-all-buffers arg))
-
-;;;###autoload
-(defun modaled-define-default-state (&rest body)
-  "Define default state with specs in BODY.
-
-See `modaled--initialize' for the argument format."
-  (declare (indent defun))
-  ;; update after major mode changes
-  (add-hook 'after-change-major-mode-hook
-            (lambda ()
-              ; re-init
-              (setq modaled--initialized nil)
-              (modaled--initialize body)))
-  ;; update on creation (no major mode change yet)
-  (add-hook 'buffer-list-update-hook
-            (lambda () (modaled--initialize-all-buffers body)))
-  ;; enable it for all existing buffers
-  (modaled--initialize-all-buffers body))
-(make-obsolete #'modaled-define-default-state #'modaled-setup "0.8.3")
+  (modaled-initialize-all-buffers))
 
 ;;;###autoload
 (defun modaled-enable-substate-on-state-change (substate &rest body)
