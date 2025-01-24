@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [0.9.2](https://github.com/DCsunset/modaled/compare/v0.9.1...v0.9.2) (2025-01-24)
+
+
+### Bug Fixes
+
+* check if symbol is bound when checking minor mode ([7d417d1](https://github.com/DCsunset/modaled/commit/7d417d1822238ef64cedf260afc9e29eb22ed923))
+
 ## [0.9.1](https://github.com/DCsunset/modaled/compare/v0.9.0...v0.9.1) (2024-07-28)
 
 
