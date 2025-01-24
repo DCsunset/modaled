@@ -321,14 +321,17 @@ For each option, nil means always enabled."
   (let ((states (plist-get body :states))
         (major (plist-get body :major))
         (minor (plist-get body :minor))
-        (pred (plist-get body :pred)))
+        (pred (plist-get body :pred))
+        (check-minor (lambda (mode)
+                       (and (boundp mode)
+                            (symbol-value mode)))))
     (add-variable-watcher
      'modaled-state
      (lambda (_ new-val _ _)
        (funcall (modaled-get-substate-mode substate)
                 (if (and (or (not major) (memq major-mode major))
                          ;; check if any minor-mode is enabled
-                         (or (not minor) (memq t (mapcar #'symbol-value minor)))
+                         (or (not minor) (memq t (mapcar check-minor minor)))
                          (or (not pred) (funcall pred))
                          (or (not states) (member new-val states)))
                     1
