@@ -207,7 +207,7 @@ For example, the following keys should be changed:
 
 AGPL-3.0.
 
-    Copyright (C) 2023-2024  DCsunset
+    Copyright (C) 2023-2025  DCsunset
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published

@@ -1,6 +1,6 @@
 ;;; modaled.el --- Build your own minor modes for modal editing  -*- lexical-binding: t; -*-
 ;;
-;; Copyright (C) 2023-2024  DCsunset
+;; Copyright (C) 2023-2025  DCsunset
 ;;
 ;; Author: DCsunset
 ;; URL: https://github.com/DCsunset/modaled
